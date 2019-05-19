@@ -10,10 +10,10 @@ author=lambda ctx:ctx.message.author
 channel=lambda ctx:ctx.message.channel.id
 current_time=lambda:datetime.utcnow()+timedelta(hours=9)
 
-ALPHA=True
+ALPHA=False
 ALPHA_TESTLAB=463694274190376981
 
-BETA=False
+BETA=True
 BETA_TESTLAB=486550288686120961
 
 channels={
