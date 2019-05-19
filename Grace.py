@@ -2,6 +2,7 @@ import discord
 from discord.ext.commands import Bot
 import random
 from datetime import datetime, timedelta
+import os
 
 client=Bot(command_prefix=('!',))
 
