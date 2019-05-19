@@ -1,10 +1,9 @@
 import discord
 from discord.ext.commands import Bot
-from secret import TOKEN,pw
 import random
 from datetime import datetime, timedelta
 
-client=Bot(command_prefix=('>>','>'))
+client=Bot(command_prefix=('!',))
 
 content=lambda ctx:ctx.message.content
 author=lambda ctx:ctx.message.author
@@ -356,7 +355,5 @@ async def on_member_remove(member):
 
 ############################################################
 #실행
-client.run(TOKEN)
-
-#access_token = os.environ["BOT_TOKEN"]
-#client.run(access_token)
+access_token = os.environ["BOT_TOKEN"]
+client.run(access_token)
