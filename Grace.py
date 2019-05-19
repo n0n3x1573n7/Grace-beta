@@ -157,6 +157,7 @@ async def 내전종료(message):
     for user in current_game.players:
         log+='\n{}. {}'.format(cnt, user.name)
         cnt+=1
+    log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
 
     current_game=None
 
@@ -178,6 +179,7 @@ async def 목록(message):
     for user in current_game.players:
         log+='\n{}. {}'.format(cnt, user.name)
         cnt+=1
+    log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
     await message.channel.send(log)
 
 @client.command()
