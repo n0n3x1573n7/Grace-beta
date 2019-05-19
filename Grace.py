@@ -155,13 +155,13 @@ async def 내전종료(message):
     log="{}.{}.{} {}:{} 내전 참가자 목록\n\n개최자: {}\n".format(current_game.time.year, current_game.time.month, current_game.time.day, current_game.time.hour, current_game.time.minute, current_game.opener.name)
     cnt=1
     for user in current_game.players:
-        log+='\n{}. {}'.format(cnt, current_game.opener.name)
+        log+='\n{}. {}'.format(cnt, user.name)
         cnt+=1
 
     current_game=None
 
-    await message.channel.send("내전이 종료되었습니다.")
     await logchannel.send(log)
+    await message.channel.send("내전이 종료되었습니다.")
 
 @client.command()
 async def 목록(message):
@@ -176,7 +176,7 @@ async def 목록(message):
     log="{}.{}.{} {}:{} 내전 참가자 목록\n\n개최자: {}\n".format(current_game.time.year, current_game.time.month, current_game.time.day, current_game.time.hour, current_game.time.minute, current_game.opener.name)
     cnt=1
     for user in current_game.players:
-        log+='\n{}. {}'.format(cnt, current_game.opener.name)
+        log+='\n{}. {}'.format(cnt, user.name)
         cnt+=1
     await message.channel.send(log)
 
