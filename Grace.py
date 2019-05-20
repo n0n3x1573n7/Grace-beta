@@ -34,22 +34,16 @@ if ALPHA:
 #일반 커맨드
 @client.command()
 async def 리그(message):
-    if TESTING and message.channel.id!=TEST:
-        return
     await message.channel.send("https://www.twitch.tv/overwatchleague_kr")
 
 @client.command()
 async def 랜덤(message):
-    if TESTING and message.channel.id!=TEST:
-        return
     selection=content(message)
     items=selection.split()[1:]
     await message.channel.send("||{}||".format(random.choice(items)))
 
 @client.command()
 async def 쟁탈추첨(message):
-    if TESTING and message.channel.id!=TEST:
-        return
     maps=['리장 타워','일리오스','오아시스','부산','네팔',]
     await message.channel.send(random.choice(maps))
 
