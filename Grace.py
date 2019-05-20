@@ -18,9 +18,11 @@ BETA=True
 BETA_TESTLAB=486550288686120961
 
 channels={
-    '내전신청':469109911016570890,
-    '활동로그':513694118472450048,
-}
+    '내전신청':    469109911016570890,
+    '활동로그':    513694118472450048,
+    '메시지_로그': 527859699702562828,
+    '출입_로그':   516122942896078868,
+    }
 
 if BETA:
     for _ in channels:
@@ -89,7 +91,7 @@ async def 내전개최(message):
     if message.channel.id!=channels['내전신청']:
         return
     if current_game is not None:
-        await message.channel.send("이미 {}에 내전이 예정되어 있습니다.".format(current_game.time))
+        await message.channel.send("이미 {}에 내전이 예정되어 있습니다.".format(str(current_game.time)[:-3]))
         return
     
     opener=author(message)
@@ -97,7 +99,7 @@ async def 내전개최(message):
     current=current_time()
     time=content(message).split()
     if len(time)==1:
-        hour=9
+        hour=21
         minute=0
     else:
         time=time[1].split(':')
@@ -107,7 +109,7 @@ async def 내전개최(message):
 
     current_game=Internal(opener, time)
 
-    msg="@everyone\n{}.{}.{} {}:{} 내전 신청이 열렸습니다.\n개최자: {}".format(current_game.time.year, current_game.time.month, current_game.time.day, current_game.time.hour, current_game.time.minute, current_game.opener.mention)
+    msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -127,7 +129,7 @@ async def 개최자변경(message):
         await message.channel.send("내전 개최자만 개최자를 변경할 수 있습니다.")
         return
     current_game.opener=new_opener
-    msg="{}.{}.{} {}:{} 내전 개최자가 {}로 변경되었습니다.".format(current_game.time.year, current_game.time.month, current_game.time.day, current_game.time.hour, current_game.time.minute, current_game.opener.mention)
+    msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(current_game.time)[:-3], current_game.opener.mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -144,9 +146,9 @@ async def 내전종료(message):
     if closer!=current_game.opener:
         await message.channel.send("내전 개최자만 내전을 종료할 수 있습니다.")
     
-    logchannel=message.server.get_channel(channels['활동로그'])
+    logchannel=message.message.guild.get_channel(channels['활동로그'])
 
-    log="{}.{}.{} {}:{} 내전 참가자 목록\n\n개최자: {}\n".format(current_game.time.year, current_game.time.month, current_game.time.day, current_game.time.hour, current_game.time.minute, current_game.opener.name)
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.name)
     cnt=1
     for user in current_game.players:
         log+='\n{}. {}'.format(cnt, user.name)
@@ -168,7 +170,7 @@ async def 목록(message):
         await message.channel.send("신청중인 내전이 없습니다.")
         return
 
-    log="{}.{}.{} {}:{} 내전 참가자 목록\n\n개최자: {}\n".format(current_game.time.year, current_game.time.month, current_game.time.day, current_game.time.hour, current_game.time.minute, current_game.opener.name)
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.name)
     cnt=1
     for user in current_game.players:
         log+='\n{}. {}'.format(cnt, user.name)
@@ -210,7 +212,7 @@ async def 신청(message):
     player=author(message)
 
     if (current_game.time-current_time()<timedelta(minutes=10) and not current_game.additional_opened)\
-       or (current_game.time-current_time()<timedelta(hours=-1)):
+       or (current_time()-current_game.time>=timedelta(hours=1)):
         await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
         return
 
@@ -334,14 +336,14 @@ async def on_message_delete(message):
     author = message.author
     content = message.content
     channel = message.channel
-    delchannel = message.server.get_channel("527859699702562828")
+    delchannel = message.server.get_channel('메시지_로그')
     await client.send_message(delchannel, '{} / {}: {}'.format(channel, author, content))
 
 @client.event
 async def on_member_join(member):
     if TESTING: return
     fmt = '<@332564579148103691>\n{0.mention}님이 {1.name}에 입장하였습니다.'
-    channel = member.server.get_channel("516122942896078868")
+    channel = member.server.get_channel('출입_로그')
     await client.send_message(channel, fmt.format(member, member.server))
     #await client.send_message(member, "디스코드 권한 부여 해 드렸고요")
     role = discord.utils.get(member.server.roles, name='외부인')
@@ -350,7 +352,7 @@ async def on_member_join(member):
 @client.event
 async def on_member_remove(member):
     if TESTING: return
-    channel = member.server.get_channel("516122942896078868")
+    channel = member.server.get_channel('출입_로그')
     fmt = '{0.mention}\n{0.nick}님이 서버에서 나가셨습니다.'
     await client.send_message(channel, fmt.format(member, member.server))
 
