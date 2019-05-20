@@ -112,6 +112,19 @@ async def 내전개최(message):
     msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
     await message.channel.send(msg)
 
+async def 내전확인(message):
+    global current_game
+
+    if message.channel.id!=channels['내전신청']:
+        return
+
+    if current_game is None:
+        await message.channel.send("내전이 예정되어 있지 않습니다.")
+
+    else:
+        msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
+        message.channel.send(msg)
+
 @client.command()
 async def 개최자변경(message):
     global current_game
@@ -148,10 +161,10 @@ async def 내전종료(message):
     
     logchannel=message.message.guild.get_channel(channels['활동로그'])
 
-    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.display_name.split('/')[0])
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.nick.split('/')[0])
     cnt=1
     for user in current_game.players:
-        log+='\n{}. {}'.format(cnt, user.display_name)
+        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
 
@@ -170,10 +183,10 @@ async def 목록(message):
         await message.channel.send("신청중인 내전이 없습니다.")
         return
 
-    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.display_name.split('/')[0])
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.nick.split('/')[0])
     cnt=1
     for user in current_game.players:
-        log+='\n{}. {}'.format(cnt, user.display_name)
+        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
     await message.channel.send(log)
@@ -315,6 +328,7 @@ async def 도움말(ctx):
         embed.add_field(name="신청반려 @사용자1 @사용자2 ...\n",value="멘션한 사용자들의 신청을 반려합니다.\n",inline=False)
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="모든 사람이 사용 가능한 명령어",value="\u200B",inline=False)
+        embed.add_field(name="내전확인\n",value="현재 내전이 개최중이라면 내전의 정보를 출력합니다.",inline=False)
         embed.add_field(name="목록\n",value="선착순으로, 신청자 목록을 확인합니다.\n",inline=False)
         embed.add_field(name="신청\n",value="본인이 개최된 내전에 신청합니다.\n",inline=False)
         embed.add_field(name="취소\n",value="본인의 내전 신청을 취소합니다.\n",inline=False)
