@@ -148,10 +148,10 @@ async def 내전종료(message):
     
     logchannel=message.message.guild.get_channel(channels['활동로그'])
 
-    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.name)
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.display_name.split('/')[0])
     cnt=1
     for user in current_game.players:
-        log+='\n{}. {}'.format(cnt, user.name)
+        log+='\n{}. {}'.format(cnt, user.display_name)
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
 
@@ -170,10 +170,10 @@ async def 목록(message):
         await message.channel.send("신청중인 내전이 없습니다.")
         return
 
-    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.name)
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.display_name.split('/')[0])
     cnt=1
     for user in current_game.players:
-        log+='\n{}. {}'.format(cnt, user.name)
+        log+='\n{}. {}'.format(cnt, user.display_name)
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
     await message.channel.send(log)
