@@ -32,6 +32,9 @@ if ALPHA:
     for _ in channels:
         channels[_]=ALPHA_TESTLAB
 
+def is_moderator(user):
+    return "클랜 마스터" in user.roles or "운영진" in user.roles
+
 ############################################################
 #일반 커맨드
 @client.command()
@@ -112,6 +115,32 @@ async def 내전개최(message):
     msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
     await message.channel.send(msg)
 
+async def 시간변경(message):
+    global current_game
+
+    if message.channel.id!=channels['내전신청']:
+        return
+    if current_game is None:
+        await message.channel.send("신청중인 내전이 없습니다.")
+        return
+
+    opener=author(message)
+
+    current=current_time()
+    time=content(message).split()
+    if len(time)==1:
+        hour=21
+        minute=0
+    else:
+        time=time[1].split(":")
+        hour=int(time[0])
+        minute=int(time[1])
+    time=datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)map
+
+    prev_time, current_game.time=current_game.time, time
+
+    msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(current_game.time)[:-3], current_game.opener.mention)
+
 async def 내전확인(message):
     global current_game
 
@@ -138,8 +167,8 @@ async def 개최자변경(message):
     prev_opener=author(message)
     new_opener=message.message.mentions[0]
 
-    if prev_opener!=current_game.opener:
-        await message.channel.send("내전 개최자만 개최자를 변경할 수 있습니다.")
+    if prev_opener!=current_game.opener or (not is_moderator(prev_opener)):
+        await message.channel.send("내전 개최자 또는 운영진만 개최자를 변경할 수 있습니다.")
         return
     current_game.opener=new_opener
     msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(current_game.time)[:-3], current_game.opener.mention)
@@ -156,8 +185,8 @@ async def 내전종료(message):
         return
 
     closer=author(message)
-    if closer!=current_game.opener:
-        await message.channel.send("내전 개최자만 내전을 종료할 수 있습니다.")
+    if closer!=current_game.opener or (not is_moderator(closer)):
+        await message.channel.send("내전 개최자 또는 운영진만 내전을 종료할 수 있습니다.")
     
     logchannel=message.message.guild.get_channel(channels['활동로그'])
 
@@ -172,6 +201,24 @@ async def 내전종료(message):
 
     await logchannel.send(log)
     await message.channel.send("내전이 종료되었습니다.")
+
+@client.command()
+async def 내전취소(message):
+    global current_game
+
+    if message.channel.id!=channels['내전신청']:
+        return
+    if current_game is None:
+        await message.channel.send("신청중인 내전이 없습니다.")
+        return
+
+    closer=author(message)
+    if closer!=current_game.opener or (not is_moderator(closer)):
+        await message.channel.send("내전 개최자 또는 운영진만 내전을 종료할 수 있습니다.")
+
+    current_game=None
+
+    await message.channel.send("내전이 취소되었습니다.")
 
 @client.command()
 async def 목록(message):
@@ -202,8 +249,8 @@ async def 추가신청허용(message):
         return
 
     opener=author(message)
-    if opener!=current_game.opener:
-        await message.channel.send("내전 개최자만 추가신청을 허용할 수 있습니다.")
+    if opener!=current_game.opener or (not is_moderator(opener)):
+        await message.channel.send("내전 개최자 또는 운영진만 추가신청을 허용할 수 있습니다.")
         return
 
     if not current_game.open_additional():
@@ -268,8 +315,8 @@ async def 임의신청(message):
         return
 
     opener=author(message)
-    if opener!=current_game.opener:
-        await message.channel.send("내전 개최자만 임의신청이 가능합니다.")
+    if opener!=current_game.opener or (not is_moderator(opener)):
+        await message.channel.send("내전 개최자 또는 운영진만 임의신청이 가능합니다.")
         return
 
     players=message.message.mentions
@@ -291,8 +338,8 @@ async def 신청반려(message):
         return
 
     opener=author(message)
-    if opener!=current_game.opener:
-        await message.channel.send("내전 개최자만 신청반려가 가능합니다.")
+    if opener!=current_game.opener or (not is_moderator(opener)):
+        await message.channel.send("내전 개최자 또는 운영진만 신청반려가 가능합니다.")
         return
 
     players=message.message.mentions
@@ -318,11 +365,13 @@ async def 도움말(ctx):
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="내전신청방",value="\u200B",inline=False)
         embed.add_field(name="\u200B",value="\u200B",inline=False)
-        embed.add_field(name="내전개최",value="내전을 개최합니다.\n",inline=False)
+        embed.add_field(name="내전개최 hh:mm",value="내전을 주어진 시각에 개최합니다. 시각을 주지 않으면 21시로 설정됩니다.\n",inline=False)
         embed.add_field(name="\u200B",value="\u200B",inline=False)
-        embed.add_field(name="개최자만 가능한 명령어",value="\u200B",inline=False)
+        embed.add_field(name="내전 개최자 및 운영진만 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="개최자변경 @사용자\n",value="개최자를 멘션한 사용자로 변경합니다.\n",inline=False)
+        embed.add_field(name="시간변경 hh:mm",value="내전의 개최 시각을 해당 시각으로 변경합니다.",inline=False)
         embed.add_field(name="내전종료\n",value="내전을 종료하고, 로그를 기록합니다.\n",inline=False)
+        embed.add_field(name="내전취소",value="내전이 모종의 이유로 취소된 경우 사용합니다. 로그가 남지 않습니다.",inline=False)
         embed.add_field(name="추가신청허용\n",value="추가신청을 허용합니다. 한번 허용하면 이후로 계속 신청이 가능하며, 내전 개최 시점 1시간 이후로는 자동으로 신청이 가능합니다.\n",inline=False)
         embed.add_field(name="임의신청 @사용자1 @사용자2 ...\n",value="멘션한 사용자들을 신청한 것으로 처리합니다.\n",inline=False)
         embed.add_field(name="신청반려 @사용자1 @사용자2 ...\n",value="멘션한 사용자들의 신청을 반려합니다.\n",inline=False)
