@@ -135,7 +135,7 @@ async def 시간변경(message):
         time=time[1].split(":")
         hour=int(time[0])
         minute=int(time[1])
-    time=datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)map
+    time=datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
 
     prev_time, current_game.time=current_game.time, time
 
