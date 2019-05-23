@@ -33,6 +33,7 @@ if ALPHA:
         channels[_]=ALPHA_TESTLAB
 
 def is_moderator(member):
+    print(member.roles)
     return "@운영진" in member.roles
 
 ############################################################
