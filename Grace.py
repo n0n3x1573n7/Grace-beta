@@ -17,6 +17,8 @@ ALPHA_TESTLAB=463694274190376981
 BETA=True
 BETA_TESTLAB=486550288686120961
 
+TESTING=ALPHA or BETA
+
 channels={
     '내전신청':    469109911016570890,
     '활동로그':    513694118472450048,
@@ -340,6 +342,7 @@ async def 신청반려(message):
 #도움말
 @client.command()
 async def 도움말(ctx):
+    if TESTING: return
     embed = discord.Embed(title="Grace bot", description="그레이스 클랜 봇입니다.", color=0xeee657)
     embed.add_field(name="\u200B",value="\u200B",inline=False)
     embed.add_field(name="전체 서버",value="\u200B",inline=False)
