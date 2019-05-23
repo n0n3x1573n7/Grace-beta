@@ -345,7 +345,8 @@ async def 신청반려(message):
 #도움말
 @client.command()
 async def 도움말(ctx):
-    if TESTING and ctx.channel.id!=channels['내전신청']: return
+    if (ALPHA or BETA) and ctx.channel.id!=channels['테스트']:
+        return
     embed = discord.Embed(title="Grace bot", description="그레이스 클랜 봇입니다.", color=0xeee657)
     embed.add_field(name="\u200B",value="\u200B",inline=False)
     embed.add_field(name="전체 서버",value="\u200B",inline=False)
@@ -374,6 +375,7 @@ async def 도움말(ctx):
         embed.add_field(name="!취소\n",value="본인의 내전 신청을 취소합니다.\n",inline=False)
     await ctx.send(embed=embed)
 
+
 ############################################################
 #자동 기록(이벤트)
 @client.event
@@ -390,25 +392,24 @@ async def on_message_delete(message):
     author = message.author
     content = message.content
     channel = message.channel
-    delchannel = message.guild.get_channel('메시지_로그')
-    await client.send_message(delchannel, '{} / {}: {}'.format(channel, author, content))
+    delchannel = message.guild.get_channel(channels['메시지_로그'])
+    await delchannel.send('{} / {}: {}'.format(channel, author, content))
 
 @client.event
 async def on_member_join(member):
     if TESTING: return
     fmt = '<@332564579148103691>\n{0.mention}님이 {1.name}에 입장하였습니다.'
-    channel = member.guild.get_channel('출입_로그')
-    await client.send_message(channel, fmt.format(member, member.guild))
-    #await client.send_message(member, "디스코드 권한 부여 해 드렸고요")
+    channel = member.guild.get_channel(channels['출입_로그'])
+    await channel.send(fmt.format(member, member.guild))
     role = discord.utils.get(member.guild.roles, name='외부인')
     await client.add_roles(member, role)
 
 @client.event
 async def on_member_remove(member):
     if TESTING: return
-    channel = member.guild.get_channel('출입_로그')
+    channel = member.guild.get_channel(channels['출입_로그'])
     fmt = '{0.mention}\n{0.nick}님이 서버에서 나가셨습니다.'
-    await client.send_message(channel, fmt.format(member, member.guild))
+    await channel.send(fmt.format(member, member.guild))
 
 
 ############################################################
