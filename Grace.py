@@ -390,25 +390,25 @@ async def on_message_delete(message):
     author = message.author
     content = message.content
     channel = message.channel
-    delchannel = message.server.get_channel('메시지_로그')
+    delchannel = message.guild.get_channel('메시지_로그')
     await client.send_message(delchannel, '{} / {}: {}'.format(channel, author, content))
 
 @client.event
 async def on_member_join(member):
     if TESTING: return
     fmt = '<@332564579148103691>\n{0.mention}님이 {1.name}에 입장하였습니다.'
-    channel = member.server.get_channel('출입_로그')
-    await client.send_message(channel, fmt.format(member, member.server))
+    channel = member.guild.get_channel('출입_로그')
+    await client.send_message(channel, fmt.format(member, member.guild))
     #await client.send_message(member, "디스코드 권한 부여 해 드렸고요")
-    role = discord.utils.get(member.server.roles, name='외부인')
+    role = discord.utils.get(member.guild.roles, name='외부인')
     await client.add_roles(member, role)
 
 @client.event
 async def on_member_remove(member):
     if TESTING: return
-    channel = member.server.get_channel('출입_로그')
+    channel = member.guild.get_channel('출입_로그')
     fmt = '{0.mention}\n{0.nick}님이 서버에서 나가셨습니다.'
-    await client.send_message(channel, fmt.format(member, member.server))
+    await client.send_message(channel, fmt.format(member, member.guild))
 
 
 ############################################################
