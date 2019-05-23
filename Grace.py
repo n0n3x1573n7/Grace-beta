@@ -33,8 +33,7 @@ if ALPHA:
         channels[_]=ALPHA_TESTLAB
 
 def is_moderator(member):
-    print(member.roles)
-    return "@운영진" in member.roles
+    return "운영진" in member.roles
 
 ############################################################
 #일반 커맨드
@@ -189,7 +188,6 @@ async def 내전종료(message):
         return
 
     closer=author(message)
-    is_moderator(closer)
     if closer!=current_game.opener and (not is_moderator(closer)):
         await message.channel.send("내전 개최자 또는 운영진만 내전을 종료할 수 있습니다.")
         return
