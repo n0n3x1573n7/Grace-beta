@@ -41,16 +41,19 @@ def is_moderator(member):
 #일반 커맨드
 @client.command()
 async def 리그(message):
+    if TESTING and message.channel.id!=channels['내전신청']: return
     await message.channel.send("https://www.twitch.tv/overwatchleague_kr")
 
 @client.command()
 async def 랜덤(message):
+    if TESTING and message.channel.id!=channels['내전신청']: return
     selection=content(message)
     items=selection.split()[1:]
     await message.channel.send("||{}||".format(random.choice(items)))
 
 @client.command()
 async def 쟁탈추첨(message):
+    if TESTING and message.channel.id!=channels['내전신청']: return
     maps=['리장 타워','일리오스','오아시스','부산','네팔',]
     await message.channel.send(random.choice(maps))
 
@@ -342,8 +345,7 @@ async def 신청반려(message):
 #도움말
 @client.command()
 async def 도움말(ctx):
-    if TESTING and message.channel.id!=channels['내전신청']:
-        return
+    if TESTING and message.channel.id!=channels['내전신청']: return
     embed = discord.Embed(title="Grace bot", description="그레이스 클랜 봇입니다.", color=0xeee657)
     embed.add_field(name="\u200B",value="\u200B",inline=False)
     embed.add_field(name="전체 서버",value="\u200B",inline=False)
