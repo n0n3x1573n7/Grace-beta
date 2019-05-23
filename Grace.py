@@ -141,6 +141,7 @@ async def 시간변경(message):
     prev_time, current_game.time=current_game.time, time
 
     msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(current_game.time)[:-3], current_game.opener.mention)
+    await message.channel.send(msg)
 
 @client.command()
 async def 내전확인(message):
@@ -153,8 +154,8 @@ async def 내전확인(message):
         await message.channel.send("내전이 예정되어 있지 않습니다.")
 
     else:
-        msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
-        message.channel.send(msg)
+        msg="{}\n{} 내전 신청이 열려 있습니다.\n개최자: {}".format(author(message).mention, str(current_game.time)[:-3], current_game.opener.mention)
+        await message.channel.send(msg)
 
 @client.command()
 async def 개최자변경(message):
