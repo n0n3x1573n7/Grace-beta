@@ -32,8 +32,8 @@ if ALPHA:
     for _ in channels:
         channels[_]=ALPHA_TESTLAB
 
-def is_moderator(user):
-    return "클랜 마스터" in user.roles or "운영진" in user.roles
+def is_moderator(member):
+    return "@운영진" in member.roles
 
 ############################################################
 #일반 커맨드
@@ -168,11 +168,11 @@ async def 개최자변경(message):
         return
 
     prev_opener=author(message)
-    new_opener=message.message.mentions[0]
-
     if prev_opener!=current_game.opener and (not is_moderator(prev_opener)):
         await message.channel.send("내전 개최자 또는 운영진만 개최자를 변경할 수 있습니다.")
         return
+
+    new_opener=message.message.mentions[0]
     current_game.opener=new_opener
     msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(current_game.time)[:-3], current_game.opener.mention)
     await message.channel.send(msg)
