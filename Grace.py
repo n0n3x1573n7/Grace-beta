@@ -33,7 +33,7 @@ if ALPHA:
         channels[_]=ALPHA_TESTLAB
 
 def is_moderator(member):
-    return "운영진" in member.roles
+    return "운영진" in map(lambda x:x.name, member.roles)
 
 ############################################################
 #일반 커맨드
