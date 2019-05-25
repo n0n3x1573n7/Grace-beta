@@ -227,8 +227,8 @@ async def 목록(message):
         return
 
     embed=discord.Embed(title="내전 참가자 목록")
-    embed.add_field(title="일시",value=str(current_game.time)[:-3], inline=True)
-    embed.add_field(title="개최자",value=current_game.opener.nick.split('/')[0], inline=False)
+    embed.add_field(name="일시",value=str(current_game.time)[:-3], inline=True)
+    embed.add_field(name="개최자",value=current_game.opener.nick.split('/')[0], inline=False)
 
     log=""
     for user in current_game.players:
@@ -236,7 +236,7 @@ async def 목록(message):
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
 
-    embed.add_field(title="신청자",value=log)
+    embed.add_field(name="신청자",value=log)
     await message.channel.send(embed=embed)
 
 @client.command()
