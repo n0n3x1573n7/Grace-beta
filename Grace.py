@@ -150,7 +150,7 @@ async def 시간변경(message):
 
     prev_time, current_game.time=current_game.time, time
 
-    msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(current_game.time)[:-3], current_game.opener.mention)
+    msg="{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(current_game.time)[:-3], current_game.opener.mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -226,13 +226,18 @@ async def 목록(message):
         await message.channel.send("신청중인 내전이 없습니다.")
         return
 
-    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.nick.split('/')[0])
-    cnt=1
+    embed=discord.Embed(title="내전 참가자 목록")
+    embed.add_field(title="일시",value=str(current_game.time)[:-3], inline=True)
+    embed.add_field(title="개최자",value=current_game.opener.nick.split('/')[0], inline=False)
+
+    log=""
     for user in current_game.players:
         log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
-    await message.channel.send(log)
+
+    embed.add_field(title="신청자",value=log)
+    await message.channel.send(embed=embed)
 
 @client.command()
 async def 추가신청허용(message):
