@@ -231,10 +231,11 @@ async def 목록(message):
     embed.add_field(name="개최자",value=current_game.opener.nick.split('/')[0], inline=False)
 
     log=""
+    cnt=0
     for user in current_game.players:
-        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
         cnt+=1
-    log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
+        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
+    log+='\n\n내전 신청자 총 {}명'.format(cnt)
 
     embed.add_field(name="신청자",value=log)
     await message.channel.send(embed=embed)
