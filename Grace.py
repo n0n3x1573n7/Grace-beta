@@ -24,7 +24,12 @@ channels={
     '활동로그':    513694118472450048,
     '메시지_로그': 527859699702562828,
     '출입_로그':   516122942896078868,
+    '테스트':      486550288686120961,
     }
+
+roles={
+    '외부인':      510731224654938112,
+}
 
 if BETA:
     for _ in channels:
@@ -400,9 +405,9 @@ async def on_member_join(member):
     if TESTING: return
     fmt = '<@332564579148103691>\n{0.mention}님이 {1.name}에 입장하였습니다.'
     channel = member.guild.get_channel(channels['출입_로그'])
+    role = member.guild.get_role(roles['외부인'])
+    await member.add_roles(role)
     await channel.send(fmt.format(member, member.guild))
-    role = discord.utils.get(member.guild.roles, name='외부인')
-    await client.add_roles(member, role)
 
 @client.event
 async def on_member_remove(member):
