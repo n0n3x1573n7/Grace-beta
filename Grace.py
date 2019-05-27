@@ -274,7 +274,7 @@ async def 신청(message):
     player=author(message)
 
     if current_game.additional_opened==False and\
-       (timedelta(minutes=-10)<current_time()-current_game.time<timedelta(hours=1)):
+       (timedelta(minutes=-9)<current_time()-current_game.time<timedelta(hours=1)):
         await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
         return
 
@@ -296,7 +296,7 @@ async def 취소(message):
 
     player=author(message)
 
-    if current_game.time-current_time()<timedelta(minutes=10):
+    if current_game.time-current_time()<timedelta(minutes=9):
         await message.channel.send("신청 취소가 불가합니다.")
         return
 
