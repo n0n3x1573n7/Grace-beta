@@ -401,7 +401,7 @@ async def on_ready():
 async def on_message_delete(message):
     if TESTING: return
     author = message.author
-    content = message.content
+    content = message.clean_content
     channel = message.channel
     delchannel = message.guild.get_channel(channels['메시지_로그'])
     await delchannel.send('{} / {}: {}'.format(channel, author, content))
