@@ -126,7 +126,7 @@ async def 내전개최(message):
 
     current_game=Internal(opener, time)
 
-    msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
+    msg="@ everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -267,7 +267,7 @@ async def 추가신청허용(message):
         await message.channel.send("추가신청이 이미 허용되어 있습니다.")
         return
 
-    await message.channel.send("@everyone\n내전의 추가신청이 허용되었습니다.")
+    await message.channel.send("@ everyone\n내전의 추가신청이 허용되었습니다.")
 
 @client.command()
 async def 신청(message):
