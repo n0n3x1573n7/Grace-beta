@@ -120,6 +120,10 @@ async def 내전개최(message):
         minute=int(time[1])
     time=datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
 
+    if time<current_time():
+        await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
+        return
+
     current_game=Internal(opener, time)
 
     msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
@@ -147,6 +151,10 @@ async def 시간변경(message):
         hour=int(time[0])
         minute=int(time[1])
     time=datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
+
+    if time<current_time():
+        await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
+        return
 
     prev_time, current_game.time=current_game.time, time
 
