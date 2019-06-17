@@ -67,19 +67,34 @@ async def 쟁탈추첨(message):
     maps=['리장 타워','일리오스','오아시스','부산','네팔',]
     await message.channel.send(random.choice(maps))
 
+############################################################
+#그룹찾기 - 빠른대전
 @client.command()
 async def 빠대(message):
     if TESTING and message.channel.id!=channels['그룹찾기']: return
-    print("WTF?")
     member=author(message)
+    role=member.guild.get_role(roles['빠대'])
     if not has_role(member, '빠대'):
-        role = member.guild.get_role(roles['빠대'])
         await member.add_roles(role)
         await message.channel.send('{} 빠대 역할이 부여되었습니다.'.format(member.mention))
     else:
-        role = member.guild.get_role(roles['빠대'])
         await member.remove_roles(role)
         await message.channel.send('{} 빠대 역할이 제거되었습니다.'.format(member.mention))
+
+@client.command()
+async def 빠대목록(message):
+    if TESTING and message.channel.id!=channels['그룹찾기']: return
+    role=member.guild.get_role(roles['빠대'])
+    waiting=role.members
+
+    embed=discord.Embed(title="빠대 대기자 목록")
+
+    log=""
+    for user in waiting:
+        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
+
+    embed.add_field(name="대기자",value=log)
+    await message.channel.send(embed=embed)
 
 ############################################################
 #내전 커맨드
@@ -411,6 +426,12 @@ async def 도움말(ctx):
         embed.add_field(name="!목록\n",value="선착순으로, 신청자 목록을 확인합니다.\n",inline=False)
         embed.add_field(name="!신청\n",value="본인이 개최된 내전에 신청합니다.\n",inline=False)
         embed.add_field(name="!취소\n",value="본인의 내전 신청을 취소합니다.\n",inline=False)
+    if ctx.channel.id==channels['그룹찾기']:
+        embed.add_field(name="\u200B",value="\u200B",inline=False)
+        embed.add_field(name="그룹찾기",value="\u200B",inline=False)
+        embed.add_field(name="\u200B",value="\u200B",inline=False)
+        embed.add_field(name="!빠대\n",value="빠대 역할이 없다면 역할을 부여하고, 있다면 제거합니다. '@빠대'로 멘션이 가능합니다.\n",inline=False)
+        embed.add_field(name="!빠대목록\n",value="빠대 역할을 부여받은 모든 사람의 목록을 순서에 상관 없이 출력합니다.\n",inline=False)
     await ctx.send(embed=embed)
 
 
