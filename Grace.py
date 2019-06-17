@@ -70,8 +70,8 @@ async def 쟁탈추첨(message):
 @client.command()
 async def 빠대(message):
     if TESTING and message.channel.id!=channels['그룹찾기']: return
-    sender=author(message)
-    if not has_role(sender, '빠대'):
+    member=author(message)
+    if not has_role(member, '빠대'):
         role = member.guild.get_role(roles['빠대'])
         await member.add_roles(role)
         await message.channel.send('{} 빠대 역할이 부여되었습니다.'.format(member.mention))
