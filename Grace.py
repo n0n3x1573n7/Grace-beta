@@ -70,6 +70,7 @@ async def 쟁탈추첨(message):
 @client.command()
 async def 빠대(message):
     if TESTING and message.channel.id!=channels['그룹찾기']: return
+    print("WTF?")
     member=author(message)
     if not has_role(member, '빠대'):
         role = member.guild.get_role(roles['빠대'])
