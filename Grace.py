@@ -92,9 +92,9 @@ async def 빠대목록(message):
 
     log=""
     for user in waiting:
-        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
+        log+='\n{}'.format(user.nick.split('/')[0])
 
-    embed.add_field(name="대기자",value=log)
+    embed.add_field(name="대기자",value=log[1:])
     await message.channel.send(embed=embed)
 
 ############################################################
