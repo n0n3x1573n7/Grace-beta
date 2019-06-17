@@ -84,6 +84,7 @@ async def 빠대(message):
 @client.command()
 async def 빠대목록(message):
     if TESTING and message.channel.id!=channels['그룹찾기']: return
+    member=author(message)
     role=member.guild.get_role(roles['빠대'])
     waiting=role.members
 
@@ -401,18 +402,14 @@ async def 도움말(ctx):
     if (ALPHA or BETA) and ctx.channel.id!=channels['테스트']:
         return
     embed = discord.Embed(title="Grace bot", description="그레이스 클랜 봇입니다.", color=0xeee657)
-    embed.add_field(name="\u200B",value="\u200B",inline=False)
     embed.add_field(name="전체 서버",value="\u200B",inline=False)
-    embed.add_field(name="\u200B",value="\u200B",inline=False)
     embed.add_field(name="!리그\n",value="한국 오버워치 리그 트위치 링크를 줍니다.\n",inline=False)
     embed.add_field(name="!랜덤 (선택1) (선택2) (선택3) ...\n",value="선택지 중 무작위로 하나를 골라줍니다.\n",inline=False)
     embed.add_field(name="!쟁탈추첨\n",value="쟁탈 맵 중 하나를 무작위로 골라줍니다.\n",inline=False)
     if ctx.channel.id==channels['내전신청']:
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="내전신청방",value="\u200B",inline=False)
-        embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="!내전개최 hh:mm",value="내전을 주어진 시각에 개최합니다. 시각을 주지 않으면 21시로 설정됩니다.\n",inline=False)
-        embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="내전 개최자 및 운영진만 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="!개최자변경 @사용자\n",value="개최자를 멘션한 사용자로 변경합니다.\n",inline=False)
         embed.add_field(name="!시간변경 hh:mm",value="내전의 개최 시각을 해당 시각으로 변경합니다.",inline=False)
@@ -420,7 +417,6 @@ async def 도움말(ctx):
         embed.add_field(name="!추가신청허용\n",value="추가신청을 허용합니다. 한번 허용하면 이후로 계속 신청이 가능하며, 내전 개최 시점 1시간 이후로는 자동으로 신청이 가능합니다.\n",inline=False)
         embed.add_field(name="!임의신청 @사용자1 @사용자2 ...\n",value="멘션한 사용자들을 신청한 것으로 처리합니다.\n",inline=False)
         embed.add_field(name="!신청반려 @사용자1 @사용자2 ...\n",value="멘션한 사용자들의 신청을 반려합니다.\n",inline=False)
-        embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="모든 사람이 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="!내전확인\n",value="현재 내전이 개최중이라면 내전의 정보를 출력합니다.",inline=False)
         embed.add_field(name="!목록\n",value="선착순으로, 신청자 목록을 확인합니다.\n",inline=False)
@@ -429,7 +425,6 @@ async def 도움말(ctx):
     if ctx.channel.id==channels['그룹찾기']:
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="그룹찾기",value="\u200B",inline=False)
-        embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="!빠대\n",value="빠대 역할이 없다면 역할을 부여하고, 있다면 제거합니다. '@빠대'로 멘션이 가능합니다.\n",inline=False)
         embed.add_field(name="!빠대목록\n",value="빠대 역할을 부여받은 모든 사람의 목록을 순서에 상관 없이 출력합니다.\n",inline=False)
     await ctx.send(embed=embed)
