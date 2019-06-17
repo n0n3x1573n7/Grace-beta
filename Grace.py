@@ -25,10 +25,12 @@ channels={
     '메시지_로그': 527859699702562828,
     '출입_로그':   516122942896078868,
     '테스트':      486550288686120961,
+    '그룹찾기':    420843334614122516,
     }
 
 roles={
     '외부인':      510731224654938112,
+    '빠대':        527842187862605834,
 }
 
 if BETA:
@@ -42,25 +44,41 @@ if ALPHA:
 def is_moderator(member):
     return "운영진" in map(lambda x:x.name, member.roles)
 
+def has_role(member, role):
+    return role in map(lambda x:x.name, member.roles)
+
 ############################################################
 #일반 커맨드
 @client.command()
 async def 리그(message):
-    if TESTING and message.channel.id!=channels['내전신청']: return
+    if TESTING and message.channel.id!=BETA_TESTLAB: return
     await message.channel.send("https://www.twitch.tv/overwatchleague_kr")
 
 @client.command()
 async def 랜덤(message):
-    if TESTING and message.channel.id!=channels['내전신청']: return
+    if TESTING and message.channel.id!=BETA_TESTLAB: return
     selection=content(message)
     items=selection.split()[1:]
     await message.channel.send("||{}||".format(random.choice(items)))
 
 @client.command()
 async def 쟁탈추첨(message):
-    if TESTING and message.channel.id!=channels['내전신청']: return
+    if TESTING and message.channel.id!=BETA_TESTLAB: return
     maps=['리장 타워','일리오스','오아시스','부산','네팔',]
     await message.channel.send(random.choice(maps))
+
+@client.command()
+async def 빠대(message):
+    if TESTING and message.channel.id!=channels['그룹찾기']: return
+    sender=author(message)
+    if not has_role(sender, '빠대'):
+        role = member.guild.get_role(roles['빠대'])
+        await member.add_roles(role)
+        await message.channel.send('{} 빠대 역할이 부여되었습니다.'.format(member.mention))
+    else:
+        role = member.guild.get_role(roles['빠대'])
+        await member.remove_roles(role)
+        await message.channel.send('{} 빠대 역할이 제거되었습니다.'.format(member.mention))
 
 ############################################################
 #내전 커맨드
