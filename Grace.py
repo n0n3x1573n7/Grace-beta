@@ -46,6 +46,7 @@ async def on_message(message):
         role = spreadsheet.cell(row, 6).value
         imagelink = spreadsheet.cell(row, 7).value
         thumbnaillink = spreadsheet.cell(row, 8).value
+        arena = spreadsheet.cell(row, 9).value
 
 
         if spreadsheet.cell(row, 6).value == "클랜마스터":
@@ -54,6 +55,8 @@ async def on_message(message):
             roleimage = ":construction_worker:"
         elif spreadsheet.cell(row, 6).value == "클랜원":
             roleimage = ":boy:"
+        elif spreadsheet.cell(row, 6).value == "신입클랜원":
+            roleimage = ""
 
         if link is "X":
             embed = discord.Embed(title="한줄소개", description=description, color=0x5c0bb7)
@@ -64,7 +67,7 @@ async def on_message(message):
         embed.set_thumbnail(url=thumbnaillink)
         embed.set_author(name=battletag)
         embed.add_field(name="직책", value=roleimage + role, inline=True)
-        embed.add_field(name='Grace Arena', value=':trophy: 제3,4,15,16,17회 우승', inline=True)
+        embed.add_field(name="Grace Arena", value=":trophy: 제 " + arena + "회 우승", inline=True)
 
         await channel.send(embed=embed)
 
