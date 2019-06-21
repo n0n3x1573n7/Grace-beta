@@ -1,1 +1,1 @@
-worker: python Grace_game.py & wait -n
+worker: python Grace.py & python Grace_game.py & wait -n
