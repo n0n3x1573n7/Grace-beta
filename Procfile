@@ -1,1 +1,1 @@
-worker: python Grace_game.py
+worker: python Grace_game.py &
