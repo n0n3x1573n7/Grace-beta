@@ -28,6 +28,9 @@ async def on_message(message):
     author = message.author
     content = message.content
     channel = message.channel
+
+    if channel.id!=486550288686120961: return
+
     print('{} / {}: {}'.format(channel, author, content))
 
     if message.content.startswith(">>"):
