@@ -29,52 +29,50 @@ async def on_message(message):
     content = message.content
     channel = message.channel
 
+    if channel.id!=486550288686120961: return
+
     print('{} / {}: {}'.format(channel, author, content))
 
-    while 1:
-        if message.content.startswith(">>"):
-            author = message.content
-            author = author.split(">>")
-            author = author[1]
+    if message.content.startswith(">>"):
+        author = message.content
+        author = author.split(">>")
+        author = author[1]
 
-            try:
-                spreadsheet.find(author)
-            except Exception:
-                break
-            cell = spreadsheet.find(author)
-            row = cell.row
+        if spreadsheet.find(author) is False:
+            return False
+        cell = spreadsheet.find(author)
+        row = cell.row
 
-            battletag = spreadsheet.cell(row, 2).value
-            link = spreadsheet.cell(row, 4).value
-            description = spreadsheet.cell(row, 5).value
-            role = spreadsheet.cell(row, 6).value
-            imagelink = spreadsheet.cell(row, 7).value
-            thumbnaillink = spreadsheet.cell(row, 8).value
-            arena = spreadsheet.cell(row, 9).value
+        battletag = spreadsheet.cell(row, 2).value
+        link = spreadsheet.cell(row, 4).value
+        description = spreadsheet.cell(row, 5).value
+        role = spreadsheet.cell(row, 6).value
+        imagelink = spreadsheet.cell(row, 7).value
+        thumbnaillink = spreadsheet.cell(row, 8).value
+        arena = spreadsheet.cell(row, 9).value
 
 
-            if spreadsheet.cell(row, 6).value == "클랜마스터":
-                roleimage = ":pen_ballpoint:"
-            elif spreadsheet.cell(row, 6).value == "운영진":
-                roleimage = ":construction_worker:"
-            elif spreadsheet.cell(row, 6).value == "클랜원":
-                roleimage = ":boy:"
-            elif spreadsheet.cell(row, 6).value == "신입클랜원":
-                roleimage = ""
+        if spreadsheet.cell(row, 6).value == "클랜마스터":
+            roleimage = ":pen_ballpoint:"
+        elif spreadsheet.cell(row, 6).value == "운영진":
+            roleimage = ":construction_worker:"
+        elif spreadsheet.cell(row, 6).value == "클랜원":
+            roleimage = ":boy:"
+        elif spreadsheet.cell(row, 6).value == "신입클랜원":
+            roleimage = ""
 
-            if link is "X":
-                embed = discord.Embed(title="한줄소개", description=description, color=0x5c0bb7)
-            elif link is not None:
-                embed = discord.Embed(title="바로가기", url=link, description=description, color=0x5c0bb7)
+        if link is "X":
+            embed = discord.Embed(title="한줄소개", description=description, color=0x5c0bb7)
+        elif link is not None:
+            embed = discord.Embed(title="바로가기", url=link, description=description, color=0x5c0bb7)
 
-            embed.set_image(url=imagelink)
-            embed.set_thumbnail(url=thumbnaillink)
-            embed.set_author(name=battletag)
-            embed.add_field(name="직책", value=roleimage + role, inline=True)
-            embed.add_field(name="Grace Arena", value=":trophy: 제 " + arena + "회 우승", inline=True)
+        embed.set_image(url=imagelink)
+        embed.set_thumbnail(url=thumbnaillink)
+        embed.set_author(name=battletag)
+        embed.add_field(name="직책", value=roleimage + role, inline=True)
+        embed.add_field(name="Grace Arena", value=":trophy: 제 " + arena + "회 우승", inline=True)
 
-            await channel.send(embed=embed)
-            break
+        await channel.send(embed=embed)
 
     if message.content == '!안녕':
         await channel.send("안녕하세요")
