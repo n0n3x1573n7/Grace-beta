@@ -38,8 +38,10 @@ async def on_message(message):
         author = author.split(">>")
         author = author[1]
 
-        if spreadsheet.find(author) is False:
-            return False
+        try:
+            spreadsheet.find(author)
+        except gspread.exceptions.CellNotFound:
+            return
         cell = spreadsheet.find(author)
         row = cell.row
 
