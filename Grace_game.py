@@ -364,10 +364,10 @@ async def 임의신청(message):
         await message.channel.send("내전 개최자 또는 운영진만 임의신청이 가능합니다.")
         return
 
-    players=message.message.mentions
-    print(message.message.content)
+    players=message.message.content.split()[1:]
 
-    for player in players:
+    for plr in players:
+        player=client.get_user(int(plr[2:-1]))
         if current_game.add_player(player):
             await message.channel.send("{}님의 임의신청이 완료되었습니다.".format(player.mention))
         else:
