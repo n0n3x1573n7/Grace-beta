@@ -29,8 +29,6 @@ async def on_message(message):
     content = message.content
     channel = message.channel
 
-    if channel.id!=486550288686120961: return
-
     print('{} / {}: {}'.format(channel, author, content))
 
     if message.content.startswith(">>"):
@@ -42,6 +40,8 @@ async def on_message(message):
             spreadsheet.find(author)
         except gspread.exceptions.CellNotFound:
             return
+        except gspread.exceptions.APIError:
+            return
         cell = spreadsheet.find(author)
         row = cell.row
 
@@ -52,15 +52,16 @@ async def on_message(message):
         imagelink = spreadsheet.cell(row, 7).value
         thumbnaillink = spreadsheet.cell(row, 8).value
         arena = spreadsheet.cell(row, 9).value
+        league_first = spreadsheet.cell(row, 10).value
+        league_second = spreadsheet.cell(row, 11).value
 
-
-        if spreadsheet.cell(row, 6).value == "클랜마스터":
+        if role == "클랜마스터":
             roleimage = ":pen_ballpoint:"
-        elif spreadsheet.cell(row, 6).value == "운영진":
+        elif role == "운영진":
             roleimage = ":construction_worker:"
-        elif spreadsheet.cell(row, 6).value == "클랜원":
+        elif role == "클랜원":
             roleimage = ":boy:"
-        elif spreadsheet.cell(row, 6).value == "신입클랜원":
+        elif role == "신입클랜원":
             roleimage = ""
 
         if link is "X":
@@ -73,6 +74,8 @@ async def on_message(message):
         embed.set_author(name=battletag)
         embed.add_field(name="직책", value=roleimage + role, inline=True)
         embed.add_field(name="Grace Arena", value=":trophy: 제 " + arena + "회 우승", inline=True)
+        embed.add_field(name="Grace League", value=":first_place: 제 " + league_first + "회 우승, :second_place:제 " +
+                                                   league_second + "회 준우승", inline=True)
 
         await channel.send(embed=embed)
 
