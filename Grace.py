@@ -13,6 +13,8 @@ client = discord.Client()
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
 auth = gspread.authorize(creds)
+if creds.access_token_expired:
+    auth.login()
 spreadsheet = auth.open("Grace2").sheet1
 
 @client.event
@@ -28,8 +30,6 @@ async def on_message(message):
     author = message.author
     content = message.content
     channel = message.channel
-
-    if channel.id != 486550288686120961: return
 
     print('{} / {}: {}'.format(channel, author, content))
 
