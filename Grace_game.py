@@ -368,7 +368,7 @@ async def 임의신청(message):
 
     for plr in players:
         try:
-            player=client.get_user(plr[2:-1])
+            player=client.get_user(plr[3:-1])
             print(player)
             if player==None:
                 raise Exception
