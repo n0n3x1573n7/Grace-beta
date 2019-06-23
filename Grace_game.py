@@ -369,12 +369,14 @@ async def 임의신청(message):
     for plr in players:
         try:
             player=client.get_user(int(plr[2:-1]))
+            print(player)
         except:
-            pass
+            continue
         if current_game.add_player(player):
             await message.channel.send("{}님의 임의신청이 완료되었습니다.".format(player.mention))
         else:
             await message.channel.send("{}님은 이미 신청된 플레이어입니다.".format(player.mention))
+        del player
 
 @client.command()
 async def 신청반려(message):
