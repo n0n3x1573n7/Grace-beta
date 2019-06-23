@@ -365,6 +365,7 @@ async def 임의신청(message):
         return
 
     players=message.message.mentions
+    print(message.message)
 
     for player in players:
         if current_game.add_player(player):
