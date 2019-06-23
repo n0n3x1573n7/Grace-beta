@@ -370,6 +370,8 @@ async def 임의신청(message):
         try:
             player=client.get_user(int(plr[2:-1]))
             print(player)
+            if player==None:
+                raise Exception
         except:
             continue
         if current_game.add_player(player):
