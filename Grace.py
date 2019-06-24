@@ -13,9 +13,10 @@ client = discord.Client()
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
 auth = gspread.authorize(creds)
+spreadsheet = auth.open("Grace2").sheet1
 if creds.access_token_expired:
     auth.login()
-spreadsheet = auth.open("Grace2").sheet1
+
 
 @client.event
 async def on_ready():
