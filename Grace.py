@@ -9,6 +9,7 @@ import openpyxl
 
 
 client = discord.Client()
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 
 
 @client.event
@@ -34,14 +35,14 @@ async def on_message(message):
         author = author.split(">>")
         author = author[1]
 
-        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
         creds = ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
         auth = gspread.authorize(creds)
-        spreadsheet = auth.open("Grace2").sheet1
 
         if creds.access_token_expired:
             print("=============token expired================")
             auth.login()
+
+        spreadsheet = auth.open("Grace2").sheet1
 
         try:
             spreadsheet.find(author)
