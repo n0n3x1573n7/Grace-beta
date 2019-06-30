@@ -22,6 +22,7 @@ current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 
 client = Bot(command_prefix=('>',))
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+grace = client.get_guild(359714850865414144)
 
 def get_spreadsheet():
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
@@ -159,9 +160,21 @@ async def 랭킹(message):
         maxrank=min(int(ct[1]), len(data))
 
     log="현재 랭킹"
-    for i in range(maxrank):
-        user=client.get_user(int(data[i][0][3:-1]))
-        log+="\n{}. {}: {}G".format(i+1, user.nick.split('/')[0], data[i][1])
+    cnt=1
+    par_cnt=0
+    prev_money=-1
+    for d in data:
+        user=grace.get_member(int(d[0][3:-1]))
+        if user:
+            if prev_money==int(d[1]):
+                par_cnt+=1
+            else:
+                cnt+=par_cnt
+                if cnt>maxrank:
+                    break
+                par_cnt=0
+                prev_money=int(d[1])
+            log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], data[i][1])
 
     await message.channel.send(log)
 
@@ -176,10 +189,23 @@ async def periodic_ranking():
         data=ws.get_all_values()[1:]
         data.sort(key=lambda x:int(x[1]), reverse=True)
 
+        maxrank=10
         log="현재 랭킹"
-        for i in range(min(10, len(data))):
-            user=client.get_user(int(data[0][3:-1]))
-            log+="\n{}. {}: {}G".format(i+1, user.nick.split('/')[0], data[i][1])
+        cnt=1
+        par_cnt=0
+        prev_money=-1
+        for d in data:
+            user=grace.get_member(int(d[0][3:-1]))
+            if user:
+                if prev_money==int(d[1]):
+                    par_cnt+=1
+                else:
+                    cnt+=par_cnt
+                    if cnt>maxrank:
+                        break
+                    par_cnt=0
+                    prev_money=int(d[1])
+                log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], data[i][1])
 
         await client.send_message(gamble_channel, log)
         next_notify+=datetime.timedelta(days=1)
