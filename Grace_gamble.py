@@ -150,7 +150,7 @@ async def 랭킹(message):
     msg=content(message)
 
     ws=get_spreadsheet()
-    data=get_all_values()[1:]
+    data=ws.get_all_values()[1:]
     data.sort(key=lambda x:int(x[1]), reverse=True)
 
     ct=msg.split()
@@ -168,12 +168,12 @@ async def 랭킹(message):
 async def periodic_ranking():
     await client.wait_until_ready()
     cur=current_time()
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day+1, 0, 0, 0)
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 0, 0, 0)+timedelta(days=1)
     while True:
         sleep((next_notify-current_time()).seconds)
 
         ws=get_spreadsheet()
-        data=get_all_values()[1:]
+        data=ws.get_all_values()[1:]
         data.sort(key=lambda x:int(x[1]), reverse=True)
 
         log="현재 랭킹"
