@@ -35,25 +35,33 @@ def get_spreadsheet():
     worksheet=sheet.worksheet(ws_name)
     return worksheet
 
-def get_row(ws,author):
+def get_row(ws,author=None,mention=None):
+    if author!=None:
+        mention=author.mention
     try: 
-        return ws.find(author.mention).row
+        return ws.find(mention.row)
     except gspread.exceptions.CellNotFound:
-        ws.append_row([author.mention,'0'])
-        return ws.find(author.mention).row
+        ws.append_row([mention,'0'])
+        return ws.find(mention).row
     except gspread.exceptions.APIError:
         return -1
 
-def get_money(author):
+def get_money(author=None, mention=None):
     ws=get_spreadsheet()
-    row=get_row(ws,author)
+    if author!=None:
+        row=get_row(ws,author)
+    else:
+        row=get_row(ws,mention=mention)
     if row==-1:
         return 0
     return int(ws.cell(row,2).value)
 
-def redeemable(author):
+def redeemable(author=None, mention=None):
     ws=get_spreadsheet()
-    row=get_row(ws,author)
+    if author!=None:
+        row=get_row(ws,author)
+    else:
+        row=get_row(ws,mention=mention)
     if row==-1:
         return False
     ct=ws.cell(row,3).value
@@ -63,9 +71,12 @@ def redeemable(author):
     else:
         return True
 
-def update_money(author, money, checkin=False):
+def update_money(money, author=None, mention=None, checkin=False):
     ws=get_spreadsheet()
-    row=get_row(ws,author)
+    if author!=None:
+        row=get_row(ws,author)
+    else:
+        row=get_row(ws,mention=mention)
     if row==-1:
         return False
     ws.update_cell(row, 2, str(money))
@@ -83,22 +94,46 @@ async def on_ready():
 
 @client.command()
 async def 출석(message):
+    if message.channel.id!=gamble_channel: return
     user=author(message)
     if redeemable(user):
         money=get_money(user)
-        if update_money(user, money+daily, checkin=True):
+        if update_money(money+daily, user, checkin=True):
             await message.channel.send("{}\n출석체크 완료!\n현재 잔고:{}G".format(user.mention, money+daily))
             return
     await message.channel.send("{} 출석체크는 24시간에 한번만 가능합니다.".format(user.mention))
 
 @client.command()
 async def 확인(message):
+    if message.channel.id!=gamble_channel: return
     user=author(message)
     money=get_money(user)
     await message.channel.send("{}\n잔고:{}G".format(user.mention, money))
 
+async def 송금(message):
+    if message.channel.id!=gamble_channel: return
+    sender=author(message)
+    money=get_money(author)
+    com, rcv, send, *rest=msg.split()
+
+    if not send.isnumeric():
+        await message.channel.send("{} 송금 금액은 정수여야 합니다.".format(sender.mention))
+        return
+
+    if money<int(send):
+        await message.channel.send("{} 송금 금액은 소지 금액을 넘어설 수 없습니다. 현재 소지 금액: {}".format(sender.mention, money))
+        return
+
+    rcv_mon=get_money(mention=rcv)
+    update_money(rcv_mon+int(send), mention=rcv)
+    update_money(money-int(send), sender)
+
+    await message.channel.send("송금 완료: {} -> {}\n보낸 사람 잔고: {}G\n받는 사람 잔고: {}G".format(sender.mention, rcv, money-int(send), rcv_mon+int(send)))
+
+
 @client.command()
 async def 동전(message):
+    if message.channel.id!=gamble_channel: return
     user=author(message)
     msg=content(message)
     com, choice, bet, *rest=msg.split()
@@ -129,23 +164,25 @@ async def 동전(message):
         msg+='실패...\n'
         money-=bet
 
-    update_money(user, money)
+    update_money(money, user)
     msg+='현재 잔고: {}'.format(money)
 
     await message.channel.send(msg)
 
 @client.command()
 async def 순위(message):
+    if message.channel.id!=gamble_channel: return
     user=author(message)
     money=get_money(user)
     ws=get_spreadsheet()
     moneys=[*sorted(map(lambda x:int(x) if x.isnumeric() else -1,ws.col_values(2)), reverse=True)]
     rank=moneys.index(money)+1
     same=moneys.count(money)
-    await message.channel.send("{}\n현재 {}위(공동 {}명)".format(user.mention, rank, same))
+    await message.channel.send("{}\n현재 {}위(동순위 {}명)".format(user.mention, rank, same))
 
 @client.command()
 async def 랭킹(message):
+    if message.channel.id!=gamble_channel: return
     user=author(message)
     msg=content(message)
 
@@ -176,6 +213,18 @@ async def 랭킹(message):
             log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], d[1])
 
     await message.channel.send(log)
+
+@client.command()
+async def 도움말(message):
+    if message.channel.id!=gamble_channel: return
+    embed = discord.Embed(title="Grace gamble bot", description="그레이스 클랜 도박 봇입니다.", color=0xeee657)
+    embed.add_field(name="\u200B",value="\u200B",inline=False)
+    embed.add_field(name=">출석\n",value="200G를 받습니다. 24시간에 한 번만 사용할 수 있습니다.\n",inline=False)
+    embed.add_field(name=">확인\n",value="자신의 소지 G를 확인합니다.\n",inline=False)
+    embed.add_field(name=">동전 [앞/뒤] (금액)\n",value="G를 걸고, 동전을 던집니다. 맞추면 두 배로 돌려받고, 틀리면 돌려받지 못합니다.\n",inline=False)
+    embed.add_field(name=">순위\n",value="자신의 순위와 동순위인 사람 수를 알려줍니다.\n",inline=False)
+    embed.add_field(name=">랭킹 {순위}\n",value="순위까지의 랭킹을 표시합니다. {순위}값을 주지 않거나 숫자가 아니라면 10위까지 표시합니다.\n",inline=False)
+    await ctx.send(embed=embed)
 
 async def periodic_ranking():
     global grace
