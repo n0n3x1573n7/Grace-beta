@@ -114,7 +114,7 @@ async def 확인(message):
 async def 송금(message):
     if message.channel.id!=gamble_channel: return
     sender=author(message)
-    money=get_money(author)
+    money=get_money(sender)
     com, rcv, send, *rest=msg.split()
 
     if not send.isnumeric():
