@@ -20,7 +20,7 @@ author=lambda ctx:ctx.message.author
 channel=lambda ctx:ctx.message.channel.id
 current_time=lambda:datetime.utcnow()+timedelta(hours=9)
 
-client = Bot(command_prefix=('~',))
+client = Bot(command_prefix=('>',))
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 
 def get_spreadsheet():
