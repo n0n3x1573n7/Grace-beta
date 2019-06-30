@@ -35,9 +35,9 @@ def get_spreadsheet():
     worksheet=sheet.worksheet(ws_name)
     return worksheet
 
-def get_row(ws,author=None,mention=None):
-    if author!=None:
-        mention=author.mention
+def get_row(ws,user=None,mention=None):
+    if user!=None:
+        mention=user.mention
     try: 
         return ws.find(mention).row
     except gspread.exceptions.CellNotFound:
@@ -46,20 +46,20 @@ def get_row(ws,author=None,mention=None):
     except gspread.exceptions.APIError:
         return -1
 
-def get_money(author=None, mention=None):
+def get_money(user=None, mention=None):
     ws=get_spreadsheet()
-    if author!=None:
-        row=get_row(ws,author)
+    if user!=None:
+        row=get_row(ws,user)
     else:
         row=get_row(ws,mention=mention)
     if row==-1:
         return 0
     return int(ws.cell(row,2).value)
 
-def redeemable(author=None, mention=None):
+def redeemable(user=None, mention=None):
     ws=get_spreadsheet()
-    if author!=None:
-        row=get_row(ws,author)
+    if user!=None:
+        row=get_row(ws,user)
     else:
         row=get_row(ws,mention=mention)
     if row==-1:
@@ -71,10 +71,10 @@ def redeemable(author=None, mention=None):
     else:
         return True
 
-def update_money(money, author=None, mention=None, checkin=False):
+def update_money(money, user=None, mention=None, checkin=False):
     ws=get_spreadsheet()
-    if author!=None:
-        row=get_row(ws,author)
+    if user!=None:
+        row=get_row(ws,user)
     else:
         row=get_row(ws,mention=mention)
     if row==-1:
