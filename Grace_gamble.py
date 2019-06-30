@@ -36,12 +36,12 @@ def get_spreadsheet():
 
 def get_row(ws,author):
     try: 
-        return ws, ws.find(author.mention).row
+        return ws.find(author.mention).row
     except gspread.exceptions.CellNotFound:
         ws.append_row([author.mention,'0'])
-        return ws, ws.find(author.mention).row
+        return ws.find(author.mention).row
     except gspread.exceptions.APIError:
-        return ws, -1
+        return -1
 
 def get_money(author):
     ws=get_spreadsheet()
