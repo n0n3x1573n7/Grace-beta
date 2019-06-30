@@ -140,20 +140,20 @@ async def 순위(message):
     money=get_money(user)
     ws=get_spreadsheet()
     moneys=[*sorted(map(lambda x:int(x) if x.isnumeric() else -1,ws.col_values(2)), reverse=True)]
-    rank=moneys.index(money)
+    rank=moneys.index(money)+1
     same=moneys.count(money)
     await message.channel.send("{}\n현재 {}위(공동 {}명)".format(user.mention, rank, same))
 
 @client.command()
 async def 랭킹(message):
     user=author(message)
-    content=content(message)
+    msg=content(message)
 
     ws=get_spreadsheet()
     data=get_all_values()[1:]
     data.sort(key=lambda x:int(x[1]), reverse=True)
 
-    ct=content.split()
+    ct=msg.split()
     maxrank=min(10, len(data))
     if len(ct)>1 and ct[1].isnumeric():
         maxrank=min(int(ct[1]), len(data))
@@ -185,4 +185,6 @@ async def periodic_ranking():
         next_notify+=datetime.timedelta(days=1)
 
 access_token = os.environ["BOT_TOKEN"]
+
+client.loop.create_task(periodic_ranking())
 client.run(access_token)
