@@ -22,8 +22,7 @@ current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 
 client=Bot(command_prefix=('>',))
 scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-await client.wait_until_ready()
-grace=client.get_guild(359714850865414144)
+grace=None
 
 def get_spreadsheet():
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
@@ -179,7 +178,9 @@ async def 랭킹(message):
     await message.channel.send(log)
 
 async def periodic_ranking():
+    global grace
     await client.wait_until_ready()
+    grace=client.get_guild(359714850865414144)
     cur=current_time()
     next_notify=datetime.datetime(cur.year, cur.month, cur.day, 0, 0, 0)+datetime.timedelta(days=1)
     while True:
