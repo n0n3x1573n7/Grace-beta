@@ -76,42 +76,42 @@ async def on_ready():
 
 @client.command()
 async def 출석(message):
-    author=author(message)
-    if redeemable(author):
-        money=get_money(author)
-        if update_money(author, money+daily):
-            await message.channel.send("{}\n출석체크 완료!\n현재 잔고:{}G".format(author.mention, money+daily))
+    user=author(message)
+    if redeemable(user):
+        money=get_money(user)
+        if update_money(user, money+daily):
+            await message.channel.send("{}\n출석체크 완료!\n현재 잔고:{}G".format(user.mention, money+daily))
             return
     await message.channel.send("출석체크는 24시간에 한번만 가능합니다.")
 
 
 @client.command()
 async def 확인(message):
-    author=author(message)
-    money=get_money(author)
-    await message.channel.send("{}\n잔고:{}G".format(author.mention, money))
+    user=author(message)
+    money=get_money(user)
+    await message.channel.send("{}\n잔고:{}G".format(user.mention, money))
 
 @client.command()
 async def 동전(message):
-    author=author(message)
+    user=author(message)
     content=content(message)
     com, choice, bet, *rest=content.split()
     
     if choice not in ('앞', '뒤'):
-        await message.channel.send("{} 앞 또는 뒤만 선택할 수 있습니다.".format(author.mention))
+        await message.channel.send("{} 앞 또는 뒤만 선택할 수 있습니다.".format(user.mention))
         return
     
     if not bet.isnumeric():
-        await message.channel.send("{} 베팅 금액은 정수여야 합니다.".format(author.mention))
+        await message.channel.send("{} 베팅 금액은 정수여야 합니다.".format(user.mention))
         return
     
     bet=int(bet)
-    money=get_money(author)
+    money=get_money(user)
     if bet>money:
-        await message.channel.send("{} 베팅 금액은 소지 금액을 넘어설 수 없습니다. 현재 소지 금액: {}".format(author.mention, money))
+        await message.channel.send("{} 베팅 금액은 소지 금액을 넘어설 수 없습니다. 현재 소지 금액: {}".format(user.mention, money))
         return
 
-    msg="{}\n동전:".format(author.mention)
+    msg="{}\n동전:".format(user.mention)
     
     result=random.choice(['앞','뒤'])
     msg+=result+'\n'
@@ -123,24 +123,24 @@ async def 동전(message):
         msg+='실패...\n'
         money-=bet
 
-    update_money(author, money)
+    update_money(user, money)
     msg+='현재 잔고: {}'.format(money)
 
     await message.channel.send(msg)
 
 @client.command()
 async def 순위(message):
-    author=author(message)
-    money=get_money(author)
+    user=author(message)
+    money=get_money(user)
     ws=get_spreadsheet()
     moneys=[*sorted(map(lambda x:int(x) if x.isnumeric() else -1,ws.col_values(2)), reverse=True)]
     rank=moneys.index(money)
     same=moneys.count(money)
-    await message.channel.send("{}\n현재 {}위(공동 {}명)".format(author.mention, rank, same))
+    await message.channel.send("{}\n현재 {}위(공동 {}명)".format(user.mention, rank, same))
 
 @client.command()
 async def 랭킹(message):
-    author=author(message)
+    user=author(message)
     content=content(message)
 
     ws=get_spreadsheet()
