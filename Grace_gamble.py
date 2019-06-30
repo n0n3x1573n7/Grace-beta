@@ -160,7 +160,7 @@ async def 랭킹(message):
 
     log="현재 랭킹"
     for i in range(maxrank):
-        user=client.get_user(int(data[0][3:-1]))
+        user=client.get_user(int(data[i][0][3:-1]))
         log+="\n{}. {}: {}G".format(i+1, user.nick.split('/')[0], data[i][1])
 
     await message.channel.send(log)
@@ -168,7 +168,7 @@ async def 랭킹(message):
 async def periodic_ranking():
     await client.wait_until_ready()
     cur=current_time()
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 0, 0, 0)+timedelta(days=1)
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 0, 0, 0)+datetime.timedelta(days=1)
     while True:
         sleep((next_notify-current_time()).seconds)
 
