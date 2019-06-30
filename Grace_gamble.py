@@ -22,12 +22,8 @@ current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 
 client=Bot(command_prefix=('>',))
 scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-for g in client.guilds:
-    print(g)
-    if g.name=='Grace':
-        grace=g
-        break
-
+await client.wait_until_ready()
+grace=client.get_guild(359714850865414144)
 
 def get_spreadsheet():
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
