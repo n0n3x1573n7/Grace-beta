@@ -161,10 +161,10 @@ async def 동전(message):
     msg+=result+'\n'
 
     if result==choice:
-        msg+='성공!\n'
+        msg+=':white_check_mark: 성공!\n'
         money+=bet
     else:
-        msg+='실패...\n'
+        msg+=':x: 실패...\n'
         money-=bet
 
     update_money(money, user)
