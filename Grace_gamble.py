@@ -55,8 +55,12 @@ def redeemable(author):
     row=get_row(ws,author)
     if row==-1:
         return False
-    time=eval(ws.cell(row,3).value)
-    return current_time()-time>=datetime.timedelta(days=1)
+    ct=ws.cell(row,3).value
+    if ct:
+        time=eval(ct)
+        return current_time()-time>=datetime.timedelta(days=1)
+    else:
+        return True
 
 def update_money(author, money, checkin=False):
     ws=get_spreadsheet()
