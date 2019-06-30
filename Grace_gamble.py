@@ -20,9 +20,9 @@ author=lambda ctx:ctx.message.author
 channel=lambda ctx:ctx.message.channel.id
 current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 
-client = Bot(command_prefix=('>',))
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-grace = client.get_guild(359714850865414144)
+client=Bot(command_prefix=('>',))
+scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+grace=client.get_guild(359714850865414144)
 
 def get_spreadsheet():
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
