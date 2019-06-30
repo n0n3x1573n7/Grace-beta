@@ -88,7 +88,7 @@ async def 출석(message):
         if update_money(user, money+daily, checkin=True):
             await message.channel.send("{}\n출석체크 완료!\n현재 잔고:{}G".format(user.mention, money+daily))
             return
-    await message.channel.send("출석체크는 24시간에 한번만 가능합니다.")
+    await message.channel.send("{} 출석체크는 24시간에 한번만 가능합니다.".format(user.mention))
 
 
 @client.command()
@@ -100,8 +100,8 @@ async def 확인(message):
 @client.command()
 async def 동전(message):
     user=author(message)
-    content=content(message)
-    com, choice, bet, *rest=content.split()
+    msg=content(message)
+    com, choice, bet, *rest=msg.split()
     
     if choice not in ('앞', '뒤'):
         await message.channel.send("{} 앞 또는 뒤만 선택할 수 있습니다.".format(user.mention))
