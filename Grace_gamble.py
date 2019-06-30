@@ -22,7 +22,11 @@ current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 
 client=Bot(command_prefix=('>',))
 scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-grace=client.get_guild(359714850865414144)
+for g in client.guilds:
+    if g.name=='Grace':
+        grace=g
+        break
+
 
 def get_spreadsheet():
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
@@ -90,7 +94,6 @@ async def 출석(message):
             await message.channel.send("{}\n출석체크 완료!\n현재 잔고:{}G".format(user.mention, money+daily))
             return
     await message.channel.send("{} 출석체크는 24시간에 한번만 가능합니다.".format(user.mention))
-
 
 @client.command()
 async def 확인(message):
