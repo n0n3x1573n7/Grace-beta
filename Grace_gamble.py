@@ -48,7 +48,7 @@ def get_money(author):
     row=get_row(ws,author)
     if row==-1:
         return 0
-    return ws.cell(row,2).value
+    return int(ws.cell(row,2).value)
 
 def redeemable(author):
     ws=get_spreadsheet()
