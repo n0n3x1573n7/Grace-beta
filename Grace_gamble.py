@@ -170,7 +170,7 @@ async def periodic_ranking():
     cur=current_time()
     next_notify=datetime.datetime(cur.year, cur.month, cur.day, 0, 0, 0)+datetime.timedelta(days=1)
     while True:
-        sleep((next_notify-current_time()).seconds)
+        await asyncio.sleep((next_notify-current_time()).seconds)
 
         ws=get_spreadsheet()
         data=ws.get_all_values()[1:]
