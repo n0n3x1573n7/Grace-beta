@@ -7,7 +7,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import random
 import openpyxl
-from datetime import datetime, timedelta
+import datetime
 from time import sleep
 
 daily=200
@@ -18,7 +18,7 @@ ws_name='Beta'
 content=lambda ctx:ctx.message.content
 author=lambda ctx:ctx.message.author
 channel=lambda ctx:ctx.message.channel.id
-current_time=lambda:datetime.utcnow()+timedelta(hours=9)
+current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 
 client = Bot(command_prefix=('>',))
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
@@ -55,15 +55,17 @@ def redeemable(author):
     row=get_row(ws,author)
     if row==-1:
         return False
-    timestr=ws.cell(row,3).value
-    return current_time()-time>=timedelta(days=1)
+    time=eval(ws.cell(row,3).value)
+    return current_time()-time>=datetime.timedelta(days=1)
 
-def update_money(author, money):
+def update_money(author, money, checkin=False):
     ws=get_spreadsheet()
     row=get_row(ws,author)
     if row==-1:
         return False
     ws.update_cell(row, 2, str(money))
+    if checkin:
+        ws.update_cell(row, 3, repr(current_time()))
     return 1
 
 @client.event
@@ -79,7 +81,7 @@ async def 출석(message):
     user=author(message)
     if redeemable(user):
         money=get_money(user)
-        if update_money(user, money+daily):
+        if update_money(user, money+daily, checkin=True):
             await message.channel.send("{}\n출석체크 완료!\n현재 잔고:{}G".format(user.mention, money+daily))
             return
     await message.channel.send("출석체크는 24시간에 한번만 가능합니다.")
@@ -162,7 +164,7 @@ async def 랭킹(message):
 async def periodic_ranking():
     await client.wait_until_ready()
     cur=current_time()
-    next_notify=datetime(cur.year, cur.month, cur.day+1, 0, 0, 0)
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day+1, 0, 0, 0)
     while True:
         sleep((next_notify-current_time()).seconds)
 
@@ -176,7 +178,7 @@ async def periodic_ranking():
             log+="\n{}. {}: {}G".format(i+1, user.nick.split('/')[0], data[i][1])
 
         await client.send_message(gamble_channel, log)
-        next_notify+=timedelta(days=1)
+        next_notify+=datetime.timedelta(days=1)
 
 access_token = os.environ["BOT_TOKEN"]
 client.run(access_token)
