@@ -14,7 +14,7 @@ scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/au
 
 @client.event
 async def on_ready():
-    print("login")
+    print("login: Grace Main Beta")
     print(client.user.name)
     print(client.user.id)
     print("---------------")

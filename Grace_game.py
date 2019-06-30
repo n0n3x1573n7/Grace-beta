@@ -405,9 +405,10 @@ async def 신청반려(message):
 
 ############################################################
 #도움말
+invalid_channels=(channels['테스트'],)
 @client.command()
 async def 도움말(ctx):
-    if (ALPHA or BETA) and ctx.channel.id!=channels['테스트']:
+    if (ALPHA or BETA) and ctx.channel.id not in invalid_channels:
         return
     embed = discord.Embed(title="Grace bot", description="그레이스 클랜 봇입니다.", color=0xeee657)
     embed.add_field(name="전체 서버",value="\u200B",inline=False)
@@ -442,37 +443,10 @@ async def 도움말(ctx):
 #자동 기록(이벤트)
 @client.event
 async def on_ready():
-    print("login")
+    print("login: Grace Game Beta")
     print(client.user.name)
     print(client.user.id)
     print("---------------")
-    await client.change_presence(activity=discord.Game(name='!', type=1))
-
-@client.event
-async def on_message_delete(message):
-    if TESTING: return
-    author = message.author
-    content = message.clean_content
-    channel = message.channel
-    delchannel = message.guild.get_channel(channels['메시지_로그'])
-    await delchannel.send('{} / {}: {}'.format(channel, author, content))
-
-@client.event
-async def on_member_join(member):
-    if TESTING: return
-    fmt = '<@332564579148103691>\n{0.mention}님이 {1.name}에 입장하였습니다.'
-    channel = member.guild.get_channel(channels['출입_로그'])
-    role = member.guild.get_role(roles['외부인'])
-    await member.add_roles(role)
-    await channel.send(fmt.format(member, member.guild))
-
-@client.event
-async def on_member_remove(member):
-    if TESTING: return
-    channel = member.guild.get_channel(channels['출입_로그'])
-    fmt = '{0.mention}\n{0.nick}님이 서버에서 나가셨습니다.'
-    await channel.send(fmt.format(member, member.guild))
-
 
 ############################################################
 #실행
