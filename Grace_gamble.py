@@ -38,6 +38,8 @@ def get_spreadsheet():
 def get_row(ws,user=None,mention=None):
     if user!=None:
         mention=user.mention
+    if not (mention.startswith('<@!') and mention.endswith('>')):
+        return -1
     try: 
         return ws.find(mention).row
     except gspread.exceptions.CellNotFound:
