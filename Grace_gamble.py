@@ -23,6 +23,7 @@ current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 client=Bot(command_prefix=('>',))
 scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 for g in client.guilds:
+    print(g)
     if g.name=='Grace':
         grace=g
         break
