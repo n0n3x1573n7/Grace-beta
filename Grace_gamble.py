@@ -128,7 +128,7 @@ async def 송금(message):
         await message.channel.send("{} 송금 금액은 소지 금액을 넘어설 수 없습니다. 현재 소지 금액: {}".format(sender.mention, money))
         return
 
-    if not (mention.startswith('<@!') and mention.endswith('>') and mention[3:-1].isnumeric() and grace.get_member(int(mention[3:-1]))!=None):
+    if not (rcv.startswith('<@!') and rcv.endswith('>') and rcv[3:-1].isnumeric() and grace.get_member(int(rcv[3:-1]))!=None):
         await message.channel.send("{} 멘션이 잘못되었습니다.".format(sender.mention))
         return
 
