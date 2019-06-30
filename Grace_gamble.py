@@ -173,7 +173,7 @@ async def 랭킹(message):
                     break
                 par_cnt=0
                 prev_money=int(d[1])
-            log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], data[i][1])
+            log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], d[1])
 
     await message.channel.send(log)
 
@@ -206,7 +206,7 @@ async def periodic_ranking():
                         break
                     par_cnt=0
                     prev_money=int(d[1])
-                log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], data[i][1])
+                log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], d[1])
 
         await client.send_message(gamble_channel, log)
         next_notify+=datetime.timedelta(days=1)
