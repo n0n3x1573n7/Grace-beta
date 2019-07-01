@@ -166,7 +166,7 @@ async def 동전(message):
         await message.channel.send("{} 베팅 금액은 소지 금액을 넘어설 수 없습니다. 현재 소지 금액: {}".format(user.mention, money))
         return
 
-    msg="{}\n동전:".format(user.mention)
+    msg="{}\n예측:{}\n동전:".format(user.mention,choice)
     
     result=random.choice(['앞','뒤'])
     msg+=result+'\n'
