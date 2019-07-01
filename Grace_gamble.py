@@ -98,7 +98,7 @@ async def on_ready():
 
 @client.command()
 async def 출석(message):
-    ws=get_spreadsheet()
+    ws=await get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
     if await redeemable(ws,user):
@@ -110,7 +110,7 @@ async def 출석(message):
 
 @client.command()
 async def 확인(message):
-    ws=get_spreadsheet()
+    ws=await get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
     money=await get_money(ws,user)
@@ -118,7 +118,7 @@ async def 확인(message):
 
 @client.command()
 async def 송금(message):
-    ws=get_spreadsheet()
+    ws=await get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     sender=author(message)
     money=await get_money(ws,sender)
@@ -145,7 +145,7 @@ async def 송금(message):
 
 @client.command()
 async def 동전(message):
-    ws=get_spreadsheet()
+    ws=await get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
     msg=content(message)
@@ -184,7 +184,7 @@ async def 동전(message):
 
 @client.command()
 async def 순위(message):
-    ws=get_spreadsheet()
+    ws=await get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
     money=await get_money(ws,user)
@@ -196,7 +196,7 @@ async def 순위(message):
 
 @client.command()
 async def 랭킹(message):
-    ws=get_spreadsheet()
+    ws=await get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
     msg=content(message)
@@ -249,7 +249,7 @@ async def periodic_ranking():
     while True:
         await asyncio.sleep((next_notify-current_time()).seconds)
 
-        ws=get_spreadsheet()
+        ws=await get_spreadsheet()
         data=ws.get_all_values()[1:]
         data.sort(key=lambda x:int(x[1]), reverse=True)
 
