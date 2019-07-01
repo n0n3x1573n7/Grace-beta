@@ -12,7 +12,7 @@ from time import sleep
 
 daily=2000
 
-gamble_channel=486550288686120961
+gamble_channel=[486550288686120961]
 ws_name='Beta'
 
 content=lambda ctx:ctx.message.content
@@ -43,7 +43,8 @@ async def get_spreadsheet():
     try:
         worksheet=sheet.worksheet(ws_name)
     except gspread.exceptions.APIError:
-        await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
+        for gamble_channel in gamble_channels:
+            await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
         return
     return worksheet
 
@@ -60,7 +61,8 @@ async def get_row(ws,user=None,mention=None):
         ws.append_row([mention,'0'])
         return ws.find(mention).row
     except gspread.exceptions.APIError:
-        await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
+        for gamble_channel in gamble_channels:
+            await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
         return -1
 
 async def get_money(ws,user=None,mention=None):
@@ -100,8 +102,8 @@ async def update_money(ws, money, user=None, mention=None, checkin=False):
 
 @client.command()
 async def 출석(message):
+    if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if message.channel.id!=gamble_channel: return
     user=author(message)
     if await redeemable(ws,user):
         money=await get_money(ws,user)
@@ -112,16 +114,16 @@ async def 출석(message):
 
 @client.command()
 async def 확인(message):
+    if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if message.channel.id!=gamble_channel: return
     user=author(message)
     money=await get_money(ws,user)
     await message.channel.send("{}\n잔고:{}G".format(user.mention, money))
 
 @client.command()
 async def 송금(message):
+    if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if message.channel.id!=gamble_channel: return
     sender=author(message)
     money=await get_money(ws,sender)
     msg=content(message)
@@ -148,8 +150,8 @@ async def 송금(message):
 
 @client.command()
 async def 동전(message):
+    if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if message.channel.id!=gamble_channel: return
     user=author(message)
     msg=content(message)
     com, choice, bet, *rest=msg.split()
@@ -193,8 +195,8 @@ async def 동전(message):
 
 @client.command()
 async def 순위(message):
+    if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if message.channel.id!=gamble_channel: return
     user=author(message)
     money=await get_money(ws,user)
 
@@ -205,8 +207,8 @@ async def 순위(message):
 
 @client.command()
 async def 랭킹(message):
+    if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if message.channel.id!=gamble_channel: return
     user=author(message)
     msg=content(message)
 
@@ -239,7 +241,7 @@ async def 랭킹(message):
 
 @client.command()
 async def 도움말(message):
-    if message.channel.id!=gamble_channel: return
+    if message.channel.id not in gamble_channels: return
     embed = discord.Embed(title="Grace gamble bot", description="그레이스 클랜 도박 봇입니다.", color=0xeee657)
     embed.add_field(name=">출석\n",value="2000G를 받습니다. 24시간에 한 번만 사용할 수 있습니다.\n",inline=False)
     embed.add_field(name=">확인\n",value="자신의 소지 G를 확인합니다.\n",inline=False)
@@ -281,7 +283,8 @@ async def periodic_ranking():
                     prev_money=int(d[1])
                 log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], d[1])
 
-        await client.get_channel(gamble_channel).send(log)
+        for gamble_channel in gamble_channels:
+            await client.get_channel(gamble_channel).send(log)
         next_notify+=datetime.timedelta(days=1)
 
 access_token = os.environ["BOT_TOKEN"]
