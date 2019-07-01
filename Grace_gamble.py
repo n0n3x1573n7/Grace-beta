@@ -32,7 +32,11 @@ def get_spreadsheet():
         auth.login()
 
     sheet=auth.open_by_url("https://docs.google.com/spreadsheets/d/1y1XnmgggAxVVJ3jJrVBocGTjpBR7b8_L9sf47GKBNok/edit#gid=0")
-    worksheet=sheet.worksheet(ws_name)
+    try:
+        worksheet=sheet.worksheet(ws_name)
+    except gspread.exceptions.APIError:
+        client.send_message(gamble_channel,"API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
+        return
     return worksheet
 
 def get_row(ws,user=None,mention=None):
@@ -46,20 +50,20 @@ def get_row(ws,user=None,mention=None):
         ws.append_row([mention,'0'])
         return ws.find(mention).row
     except gspread.exceptions.APIError:
+        client.send_message(gamble_channel,"API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
         return -1
 
-def get_money(user=None, mention=None):
-    ws=get_spreadsheet()
+def get_money(ws,user=None,mention=None):
     if user!=None:
         row=get_row(ws,user)
     else:
         row=get_row(ws,mention=mention)
     if row==-1:
+        client.send_message(gamble_channel,"API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
         return 0
     return int(ws.cell(row,2).value)
 
-def redeemable(user=None, mention=None):
-    ws=get_spreadsheet()
+def redeemable(ws, user=None, mention=None):
     if user!=None:
         row=get_row(ws,user)
     else:
@@ -73,8 +77,7 @@ def redeemable(user=None, mention=None):
     else:
         return True
 
-def update_money(money, user=None, mention=None, checkin=False):
-    ws=get_spreadsheet()
+def update_money(ws, money, user=None, mention=None, checkin=False):
     if user!=None:
         row=get_row(ws,user)
     else:
@@ -96,27 +99,30 @@ async def on_ready():
 
 @client.command()
 async def 출석(message):
+    ws=get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
-    if redeemable(user):
-        money=get_money(user)
-        if update_money(money+daily, user, checkin=True):
+    if redeemable(ws,user):
+        money=get_money(ws,user)
+        if update_money(ws,money+daily, user, checkin=True):
             await message.channel.send("{}\n출석체크 완료!\n현재 잔고:{}G".format(user.mention, money+daily))
             return
     await message.channel.send("{} 출석체크는 24시간에 한번만 가능합니다.".format(user.mention))
 
 @client.command()
 async def 확인(message):
+    ws=get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
-    money=get_money(user)
+    money=get_money(ws,user)
     await message.channel.send("{}\n잔고:{}G".format(user.mention, money))
 
 @client.command()
 async def 송금(message):
+    ws=get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     sender=author(message)
-    money=get_money(sender)
+    money=get_money(ws,sender)
     msg=content(message)
     com, rcv, send, *rest=msg.split()
 
@@ -132,14 +138,15 @@ async def 송금(message):
         await message.channel.send("{} 멘션이 잘못되었습니다.".format(sender.mention))
         return
 
-    rcv_mon=get_money(mention=rcv)
-    update_money(rcv_mon+int(send), mention=rcv)
-    update_money(money-int(send), sender)
+    rcv_mon=get_money(ws,mention=rcv)
+    update_money(ws,rcv_mon+int(send), mention=rcv)
+    update_money(ws,money-int(send), sender)
 
     await message.channel.send("송금 완료: {} -> {}\n보낸 사람 잔고: {}G\n받는 사람 잔고: {}G".format(sender.mention, rcv, money-int(send), rcv_mon+int(send)))
 
 @client.command()
 async def 동전(message):
+    ws=get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
     msg=content(message)
@@ -154,7 +161,7 @@ async def 동전(message):
         return
     
     bet=int(bet)
-    money=get_money(user)
+    money=get_money(ws,user)
     if bet>money:
         await message.channel.send("{} 베팅 금액은 소지 금액을 넘어설 수 없습니다. 현재 소지 금액: {}".format(user.mention, money))
         return
@@ -171,17 +178,18 @@ async def 동전(message):
         msg+=':x: 실패...\n'
         money-=bet
 
-    update_money(money, user)
+    update_money(ws,money, user)
     msg+='현재 잔고: {}'.format(money)
 
     await message.channel.send(msg)
 
 @client.command()
 async def 순위(message):
+    ws=get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
-    money=get_money(user)
-    ws=get_spreadsheet()
+    money=get_money(ws,user)
+
     moneys=[*sorted(map(lambda x:int(x) if x.isnumeric() else -1,ws.col_values(2)), reverse=True)]
     rank=moneys.index(money)+1
     same=moneys.count(money)
@@ -189,11 +197,11 @@ async def 순위(message):
 
 @client.command()
 async def 랭킹(message):
+    ws=get_spreadsheet()
     if message.channel.id!=gamble_channel: return
     user=author(message)
     msg=content(message)
 
-    ws=get_spreadsheet()
     data=ws.get_all_values()[1:]
     data.sort(key=lambda x:int(x[1]), reverse=True)
 
