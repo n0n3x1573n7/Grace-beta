@@ -24,6 +24,14 @@ client=Bot(command_prefix=('>',))
 scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 grace=None
 
+@client.event
+async def on_ready():
+    print("login: Grace Gamble Beta")
+    print(client.user.name)
+    print(client.user.id)
+    print("---------------")
+    await client.change_presence(activity=discord.Game(name='>>', type=1))
+
 async def get_spreadsheet():
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
     auth=gspread.authorize(creds)
@@ -87,14 +95,6 @@ async def update_money(ws, money, user=None, mention=None, checkin=False):
     if checkin:
         ws.update_cell(row, 3, repr(current_time()))
     return 1
-
-@client.event
-async def on_ready():
-    print("login: Grace Gamble Beta")
-    print(client.user.name)
-    print(client.user.id)
-    print("---------------")
-    await client.change_presence(activity=discord.Game(name='>>', type=1))
 
 @client.command()
 async def 출석(message):
