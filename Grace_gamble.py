@@ -204,7 +204,7 @@ async def 랭킹(message):
 
     log="현재 랭킹"
     cnt=1
-    par_cnt=0
+    par_cnt=1
     prev_money=-1
     for d in data:
         user=grace.get_member(int(d[0][3:-1]))
@@ -215,7 +215,7 @@ async def 랭킹(message):
                 cnt+=par_cnt
                 if cnt>maxrank:
                     break
-                par_cnt=0
+                par_cnt=1
                 prev_money=int(d[1])
             log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], d[1])
 
