@@ -35,7 +35,7 @@ def get_spreadsheet():
     try:
         worksheet=sheet.worksheet(ws_name)
     except gspread.exceptions.APIError:
-        client.send_message(gamble_channel,"API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
+        client.get_channel(gamble_channel).send(API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
         return
     return worksheet
 
@@ -50,7 +50,7 @@ def get_row(ws,user=None,mention=None):
         ws.append_row([mention,'0'])
         return ws.find(mention).row
     except gspread.exceptions.APIError:
-        client.send_message(gamble_channel,"API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
+        client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
         return -1
 
 def get_money(ws,user=None,mention=None):
@@ -59,7 +59,6 @@ def get_money(ws,user=None,mention=None):
     else:
         row=get_row(ws,mention=mention)
     if row==-1:
-        client.send_message(gamble_channel,"API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
         return 0
     return int(ws.cell(row,2).value)
 
@@ -272,7 +271,7 @@ async def periodic_ranking():
                     prev_money=int(d[1])
                 log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], d[1])
 
-        await client.send_message(gamble_channel, log)
+        await client.get_channel(gamble_channel).send(log)
         next_notify+=datetime.timedelta(days=1)
 
 access_token = os.environ["BOT_TOKEN"]
