@@ -267,8 +267,8 @@ async def periodic_ranking():
 
         maxrank=10
         log="현재 랭킹"
-        cnt=1
-        par_cnt=0
+        cnt=0
+        par_cnt=1
         prev_money=-1
         for d in data:
             user=grace.get_member(int(d[0][3:-1]))
@@ -279,7 +279,7 @@ async def periodic_ranking():
                     cnt+=par_cnt
                     if cnt>maxrank or int(d[1])==0:
                         break
-                    par_cnt=0
+                    par_cnt=1
                     prev_money=int(d[1])
                 log+="\n{}. {}: {}G".format(cnt, user.nick.split('/')[0], d[1])
 
