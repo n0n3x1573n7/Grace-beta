@@ -203,7 +203,7 @@ async def 랭킹(message):
         maxrank=min(int(ct[1]), len(data))
 
     log="현재 랭킹"
-    cnt=1
+    cnt=0
     par_cnt=1
     prev_money=-1
     for d in data:
