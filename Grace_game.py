@@ -134,6 +134,12 @@ class Internal():
             return True
         return False
 
+    def set_time(self, time):
+        self.time=time
+
+    def set_opener(self, opener):
+        self.opener=opener
+
     def get_time(self):
         return self.time
 
@@ -201,7 +207,8 @@ async def 시간변경(message):
         await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
         return
     
-    prev_time, current_game.get_time()=current_game.get_time(), time
+    prev_time=current_game.get_time()
+    current_game.set_time(time)
 
     msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(current_game.get_time())[:-3], current_game.get_opener().mention)
     await message.channel.send(msg)
@@ -236,7 +243,7 @@ async def 개최자변경(message):
         return
 
     new_opener=message.message.mentions[0]
-    current_game.get_opener()=new_opener
+    current_game.set_opener(new_opener)
     msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(current_game.get_time())[:-3], current_game.get_opener().mention)
     await message.channel.send(msg)
 
