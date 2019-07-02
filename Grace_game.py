@@ -26,6 +26,7 @@ channels={
     '출입_로그':   516122942896078868,
     '테스트':      486550288686120961,
     '그룹찾기':    420843334614122516,
+    '카지노':      594927387158904842,
     }
 
 roles={
@@ -51,19 +52,16 @@ def has_role(member, role):
 #일반 커맨드
 @client.command()
 async def 리그(message):
-    if TESTING and message.channel.id!=BETA_TESTLAB: return
     await message.channel.send("https://www.twitch.tv/overwatchleague_kr")
 
 @client.command()
 async def 랜덤(message):
-    if TESTING and message.channel.id!=BETA_TESTLAB: return
     selection=content(message)
     items=selection.split()[1:]
     await message.channel.send("||{}||".format(random.choice(items)))
 
 @client.command()
 async def 쟁탈추첨(message):
-    if TESTING and message.channel.id!=BETA_TESTLAB: return
     maps=['리장 타워','일리오스','오아시스','부산','네팔',]
     await message.channel.send(random.choice(maps))
 
@@ -71,7 +69,7 @@ async def 쟁탈추첨(message):
 #그룹찾기 - 빠른대전
 @client.command()
 async def 빠대(message):
-    if TESTING and message.channel.id!=channels['그룹찾기']: return
+    if message.channel.id!=channels['그룹찾기']: return
     member=author(message)
     role=member.guild.get_role(roles['빠대'])
     if not has_role(member, '빠대'):
@@ -83,7 +81,7 @@ async def 빠대(message):
 
 @client.command()
 async def 빠대목록(message):
-    if TESTING and message.channel.id!=channels['그룹찾기']: return
+    if message.channel.id!=channels['그룹찾기']: return
     member=author(message)
     role=member.guild.get_role(roles['빠대'])
     waiting=role.members
@@ -112,6 +110,12 @@ class Internal():
     def change_opener(self,new_opener):
         self.opener=new_opener
 
+    def get_opener(self):
+        return self.opener
+
+    def get_players(self):
+        return self.players
+
     def add_player(self,new_player):
         if new_player not in self.players:
             self.players.append(new_player)
@@ -130,6 +134,12 @@ class Internal():
             return True
         return False
 
+    def get_time(self):
+        return self.time
+
+    def is_additional_opened(self):
+        return self.additional_opened
+
 current_game=None
 
 @client.command()
@@ -139,7 +149,7 @@ async def 내전개최(message):
     if message.channel.id!=channels['내전신청']:
         return
     if current_game is not None:
-        await message.channel.send("이미 {}에 내전이 예정되어 있습니다.".format(str(current_game.time)[:-3]))
+        await message.channel.send("이미 {}에 내전이 예정되어 있습니다.".format(str(current_game.get_time())[:-3]))
         return
     
     opener=author(message)
@@ -161,7 +171,7 @@ async def 내전개최(message):
 
     current_game=Internal(opener, time)
 
-    msg="@ everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.time)[:-3], current_game.opener.mention)
+    msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.get_time())[:-3], current_game.get_opener().mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -190,10 +200,10 @@ async def 시간변경(message):
     if time<current_time():
         await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
         return
+    
+    prev_time, current_game.get_time()=current_game.get_time(), time
 
-    prev_time, current_game.time=current_game.time, time
-
-    msg="{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(current_game.time)[:-3], current_game.opener.mention)
+    msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(current_game.get_time())[:-3], current_game.get_opener().mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -207,7 +217,7 @@ async def 내전확인(message):
         await message.channel.send("내전이 예정되어 있지 않습니다.")
 
     else:
-        msg="{}\n{} 내전 신청이 열려 있습니다.\n개최자: {}".format(author(message).mention, str(current_game.time)[:-3], current_game.opener.mention)
+        msg="{}\n{} 내전 신청이 열려 있습니다.\n개최자: {}".format(author(message).mention, str(current_game.get_time())[:-3], current_game.get_opener().mention)
         await message.channel.send(msg)
 
 @client.command()
@@ -221,13 +231,13 @@ async def 개최자변경(message):
         return
 
     prev_opener=author(message)
-    if prev_opener!=current_game.opener and (not is_moderator(prev_opener)):
+    if prev_opener!=current_game.get_opener() and (not is_moderator(prev_opener)):
         await message.channel.send("내전 개최자 또는 운영진만 개최자를 변경할 수 있습니다.")
         return
 
     new_opener=message.message.mentions[0]
-    current_game.opener=new_opener
-    msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(current_game.time)[:-3], current_game.opener.mention)
+    current_game.get_opener()=new_opener
+    msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(current_game.get_time())[:-3], current_game.get_opener().mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -241,15 +251,15 @@ async def 내전종료(message):
         return
 
     closer=author(message)
-    if closer!=current_game.opener and (not is_moderator(closer)):
+    if closer!=current_game.get_opener() and (not is_moderator(closer)):
         await message.channel.send("내전 개최자 또는 운영진만 내전을 종료할 수 있습니다.")
         return
     
     logchannel=message.message.guild.get_channel(channels['활동로그'])
 
-    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.time)[:-3], current_game.opener.nick.split('/')[0])
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.get_time())[:-3], current_game.get_opener().nick.split('/')[0])
     cnt=1
-    for user in current_game.players:
+    for user in current_game.get_players():
         log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
@@ -270,12 +280,12 @@ async def 목록(message):
         return
 
     embed=discord.Embed(title="내전 참가자 목록")
-    embed.add_field(name="일시",value=str(current_game.time)[:-3], inline=True)
-    embed.add_field(name="개최자",value=current_game.opener.nick.split('/')[0], inline=False)
+    embed.add_field(name="일시",value=str(current_game.get_time())[:-3], inline=True)
+    embed.add_field(name="개최자",value=current_game.get_opener().nick.split('/')[0], inline=False)
 
     log=""
     cnt=0
-    for user in current_game.players:
+    for user in current_game.get_players():
         cnt+=1
         log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
     log+='\n\n내전 신청자 총 {}명'.format(cnt)
@@ -294,7 +304,7 @@ async def 추가신청허용(message):
         return
 
     opener=author(message)
-    if opener!=current_game.opener and (not is_moderator(opener)):
+    if opener!=current_game.get_opener() and (not is_moderator(opener)):
         await message.channel.send("내전 개최자 또는 운영진만 추가신청을 허용할 수 있습니다.")
         return
 
@@ -302,7 +312,7 @@ async def 추가신청허용(message):
         await message.channel.send("추가신청이 이미 허용되어 있습니다.")
         return
 
-    await message.channel.send("@ everyone\n내전의 추가신청이 허용되었습니다.")
+    await message.channel.send("@everyone\n내전의 추가신청이 허용되었습니다.")
 
 @client.command()
 async def 신청(message):
@@ -316,8 +326,8 @@ async def 신청(message):
 
     player=author(message)
 
-    if current_game.additional_opened==False and\
-       (timedelta(minutes=-9)<current_time()-current_game.time<timedelta(hours=1)):
+    if current_game.is_additional_opened()==False and\
+       (timedelta(minutes=-9)<current_time()-current_game.get_time()<timedelta(hours=1)):
         await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
         return
 
@@ -339,7 +349,7 @@ async def 취소(message):
 
     player=author(message)
 
-    if current_game.time-current_time()<timedelta(minutes=9):
+    if current_game.get_time()-current_time()<timedelta(minutes=9):
         await message.channel.send("신청 취소가 불가합니다.")
         return
 
@@ -360,7 +370,7 @@ async def 임의신청(message):
         return
 
     opener=author(message)
-    if opener!=current_game.opener and (not is_moderator(opener)):
+    if opener!=current_game.get_opener() and (not is_moderator(opener)):
         await message.channel.send("내전 개최자 또는 운영진만 임의신청이 가능합니다.")
         return
 
@@ -391,7 +401,7 @@ async def 신청반려(message):
         return
 
     opener=author(message)
-    if opener!=current_game.opener and (not is_moderator(opener)):
+    if opener!=current_game.get_opener() and (not is_moderator(opener)):
         await message.channel.send("내전 개최자 또는 운영진만 신청반려가 가능합니다.")
         return
 
@@ -405,20 +415,24 @@ async def 신청반려(message):
 
 ############################################################
 #도움말
-invalid_channels=(channels['테스트'],)
+invalid_channels=(channels['테스트'],channels['카지노'])
 @client.command()
 async def 도움말(ctx):
     if (ALPHA or BETA) and ctx.channel.id not in invalid_channels:
         return
     embed = discord.Embed(title="Grace bot", description="그레이스 클랜 봇입니다.", color=0xeee657)
+    embed.add_field(name="\u200B",value="\u200B",inline=False)
     embed.add_field(name="전체 서버",value="\u200B",inline=False)
+    embed.add_field(name="\u200B",value="\u200B",inline=False)
     embed.add_field(name="!리그\n",value="한국 오버워치 리그 트위치 링크를 줍니다.\n",inline=False)
     embed.add_field(name="!랜덤 (선택1) (선택2) (선택3) ...\n",value="선택지 중 무작위로 하나를 골라줍니다.\n",inline=False)
     embed.add_field(name="!쟁탈추첨\n",value="쟁탈 맵 중 하나를 무작위로 골라줍니다.\n",inline=False)
     if ctx.channel.id==channels['내전신청']:
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="내전신청방",value="\u200B",inline=False)
+        embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="!내전개최 hh:mm",value="내전을 주어진 시각에 개최합니다. 시각을 주지 않으면 21시로 설정됩니다.\n",inline=False)
+        embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="내전 개최자 및 운영진만 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="!개최자변경 @사용자\n",value="개최자를 멘션한 사용자로 변경합니다.\n",inline=False)
         embed.add_field(name="!시간변경 hh:mm",value="내전의 개최 시각을 해당 시각으로 변경합니다.",inline=False)
@@ -426,6 +440,7 @@ async def 도움말(ctx):
         embed.add_field(name="!추가신청허용\n",value="추가신청을 허용합니다. 한번 허용하면 이후로 계속 신청이 가능하며, 내전 개최 시점 1시간 이후로는 자동으로 신청이 가능합니다.\n",inline=False)
         embed.add_field(name="!임의신청 @사용자1 @사용자2 ...\n",value="멘션한 사용자들을 신청한 것으로 처리합니다.\n",inline=False)
         embed.add_field(name="!신청반려 @사용자1 @사용자2 ...\n",value="멘션한 사용자들의 신청을 반려합니다.\n",inline=False)
+        embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="모든 사람이 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="!내전확인\n",value="현재 내전이 개최중이라면 내전의 정보를 출력합니다.",inline=False)
         embed.add_field(name="!목록\n",value="선착순으로, 신청자 목록을 확인합니다.\n",inline=False)
@@ -443,7 +458,7 @@ async def 도움말(ctx):
 #자동 기록(이벤트)
 @client.event
 async def on_ready():
-    print("login: Grace Game Beta")
+    print("login: Grace Game")
     print(client.user.name)
     print(client.user.id)
     print("---------------")
