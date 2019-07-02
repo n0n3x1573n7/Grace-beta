@@ -50,13 +50,14 @@ async def on_message(message):
         author = author[1]
         
         spreadsheet=await get_spreadsheet()
-        data=spreadsheet.get_all_values()[6:]
+        roles=spreadsheet.col_values(6)
         
         if author=="운영진":
             print("print 운영진")
-            for a in data:
-                log="{}".format(a)
-                await message.channel.send(log)
+            for a in roles:
+                if a=="운영진":
+                    log="{}".format(a)
+                    await message.channel.send(log)
             return
 
         try:
