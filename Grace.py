@@ -51,6 +51,7 @@ async def on_message(message):
         
         spreadsheet=await get_spreadsheet()
         roles=spreadsheet.col_values(6)
+        battletags=spreadsheet.col_values(2)
         cnt = 1
         log = "운영진 목록입니다.\n"
         
@@ -58,7 +59,7 @@ async def on_message(message):
             for role in roles:
                 if role=="운영진":
                     print("운영진입니다.")
-                    log+=spreadsheet.cell(cnt, 2).value
+                    log+=spreadsheet.cell(cnt, 2).value+"\n"
                 cnt=cnt+1
             await message.channel.send(log)
             return
@@ -69,7 +70,7 @@ async def on_message(message):
             return
         except gspread.exceptions.APIError:
             return
-        cell = spreadsheet.find(author)
+        cell = spreadsheet.findall(author)
         row = cell.row
 
         battletag = spreadsheet.cell(row, 2).value
@@ -84,7 +85,7 @@ async def on_message(message):
 
         if role == "클랜마스터":
             roleimage = ":pen_ballpoint:"
-        elif role == "운영진":
+        elif "운영진" in role:
             roleimage = ":construction_worker:"
         elif role == "클랜원":
             roleimage = ":boy:"
