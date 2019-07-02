@@ -22,6 +22,7 @@ async def on_ready():
     await client.change_presence(activity=discord.Game(name='>>', type=1))
 
 async def get_spreadsheet():
+    print("get_sprreadsheet func")
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
     auth=gspread.authorize(creds)
 
@@ -49,7 +50,11 @@ async def on_message(message):
         author = author.split(">>")
         author = author[1]
         
-        spreadsheet=await get_spreadsheet()        
+        spreadsheet=await get_spreadsheet()
+        
+        if author=="운영진":
+            print("print 운영진")
+            return
 
         try:
             spreadsheet.find(author)
