@@ -59,7 +59,7 @@ async def on_message(message):
                 if role=="운영진":
                     print("운영진입니다.")
                     log+=spreadsheet.cell(row, 2).value
-                    cnt++
+                    cnt=
             return
 
         try:
