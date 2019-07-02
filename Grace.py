@@ -51,10 +51,15 @@ async def on_message(message):
         
         spreadsheet=await get_spreadsheet()
         roles=spreadsheet.col_values(6)
+        cnt = 1
+        log = "운영진 목록입니다.\n"
         
         if author=="운영진":
-            print("print 운영진")
-            print(roles)
+            for role in roles:
+                if role=="운영진":
+                    print("운영진입니다.")
+                    log+=spreadsheet.cell(row, 2).value
+                    cnt++
             return
 
         try:
