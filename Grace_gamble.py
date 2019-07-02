@@ -12,7 +12,7 @@ from time import sleep
 
 daily=2000
 
-gamble_channel=[486550288686120961]
+gamble_channels=[486550288686120961]
 ws_name='Beta'
 
 content=lambda ctx:ctx.message.content
