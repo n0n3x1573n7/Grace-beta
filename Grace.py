@@ -63,13 +63,13 @@ async def on_message(message):
             for role in roles:
                 if "클랜마스터" in role:
                     clanmaster+=spreadsheet.cell(cnt, 2).value+"\n"
-                if "인사운영진" in role:
+                elif "인사운영진" in role:
                     peoplemanager+=spreadsheet.cell(cnt, 2).value+"\n"
-                if "게임운영진" in role:
+                elif "게임운영진" in role:
                     gamemanager+=spreadsheet.cell(cnt, 2).value+"\n"
-                if "디자인운영진" in role:
+                elif "디자인운영진" in role:
                     designmanager+=spreadsheet.cell(cnt, 2).value+"\n"
-                if "개발운영진" in role:
+                elif "개발운영진" in role:
                     developmentmanager+=spreadsheet.cell(cnt, 2).value+"\n"
                 cnt=cnt+1
             await message.channel.send(clanmaster+"\n"+peoplemanager+"\n"+gamemanager+"\n"+designmanager+"\n"+developmentmanager)
