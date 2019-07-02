@@ -51,9 +51,13 @@ async def on_message(message):
         author = author[1]
         
         spreadsheet=await get_spreadsheet()
+        data=spreadsheet.get_all_values()[6:]
         
         if author=="운영진":
             print("print 운영진")
+            for staff in data:
+                if staff=="운영진":
+                    print("lucky!")
             return
 
         try:
