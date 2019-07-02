@@ -55,9 +55,6 @@ async def on_message(message):
         
         if author=="운영진":
             print("print 운영진")
-            for staff in data:
-                if staff=="운영진":
-                    print("lucky!")
             return
 
         try:
