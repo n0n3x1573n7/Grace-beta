@@ -57,8 +57,7 @@ async def on_message(message):
         
         if author=="운영진":
             for role in roles:
-                if role=="운영진":
-                    print("운영진입니다.")
+                if "운영진" in role:
                     log+=spreadsheet.cell(cnt, 2).value+"\n"
                 cnt=cnt+1
             await message.channel.send(log)
