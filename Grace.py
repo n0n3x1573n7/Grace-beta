@@ -70,7 +70,7 @@ async def on_message(message):
             return
         except gspread.exceptions.APIError:
             return
-        cell = spreadsheet.findall(author)
+        cell = spreadsheet.find(author)
         row = cell.row
 
         battletag = spreadsheet.cell(row, 2).value
