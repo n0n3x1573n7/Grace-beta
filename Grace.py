@@ -53,14 +53,26 @@ async def on_message(message):
         roles=spreadsheet.col_values(6)
         battletags=spreadsheet.col_values(2)
         cnt = 1
-        log = "운영진 목록입니다.\n"
+        clanmaster = "클랜 마스터\n"
+        peoplemanager = "인사 운영진\n"
+        gamemanager = "게임 운영진\n"
+        designmanager = "디자인 운영진\n"
+        developmentmanager = "개발 운영진\n"
         
         if author=="운영진":
             for role in roles:
-                if "운영진" in role:
-                    log+=spreadsheet.cell(cnt, 2).value+"\n"
+                if "클랜 마스터" in role:
+                    clanmaster+=spreadsheet.cell(cnt, 2).value+"\n"
+                if "인사운영진" in role:
+                    peoplemanager+=spreadsheet.cell(cnt, 2).value+"\n"
+                if "게임운영진" in role:
+                    gamemanager+=spreadsheet.cell(cnt, 2).value+"\n"
+                if "디자인운영진" in role:
+                    designmanager+=spreadsheet.cell(cnt, 2).value+"\n"
+                if "개발운영진" in role:
+                    developmentmanager+=spreadsheet.cell(cnt, 2).value+"\n"
                 cnt=cnt+1
-            await message.channel.send(log)
+            await message.channel.send(clanmaster+peoplemanager+gamemanager+designmanager+developmentmanager)
             return
 
         try:
