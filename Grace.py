@@ -55,7 +55,8 @@ async def on_message(message):
         if author=="운영진":
             print("print 운영진")
             for a in data:
-                log+="{}".format(a)
+                log="{}".format(a)
+                await message.channel.send(log)
             return
 
         try:
