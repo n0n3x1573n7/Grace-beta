@@ -11,6 +11,7 @@ import openpyxl
 client = discord.Client()
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 
+ws_name='Grace2'
 
 @client.event
 async def on_ready():
@@ -19,6 +20,19 @@ async def on_ready():
     print(client.user.id)
     print("---------------")
     await client.change_presence(activity=discord.Game(name='>>', type=1))
+
+async def get_spreadsheet():
+    creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
+    auth=gspread.authorize(creds)
+
+    if creds.access_token_expired:
+        auth.login()
+    
+    try:
+        worksheet=auth.open("Grace2").sheet1
+    except gspread.exceptions.APIError:
+        return
+    return worksheet
 
 @client.event
 async def on_message(message):
@@ -29,20 +43,13 @@ async def on_message(message):
     if channel.id != 486550288686120961: return
 
     print('{} / {}: {}'.format(channel, author, content))
-
+    
     if message.content.startswith(">>"):
         author = message.content
         author = author.split(">>")
         author = author[1]
-
-        creds = ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
-        auth = gspread.authorize(creds)
-
-        if creds.access_token_expired:
-            print("=============token expired================")
-            auth.login()
-
-        spreadsheet = auth.open("Grace2").sheet1
+        
+        spreadsheet=await get_spreadsheet()        
 
         try:
             spreadsheet.find(author)
