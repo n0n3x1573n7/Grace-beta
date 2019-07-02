@@ -61,7 +61,7 @@ async def on_message(message):
         
         if author=="운영진":
             for role in roles:
-                if "클랜 마스터" in role:
+                if "클랜마스터" in role:
                     clanmaster+=spreadsheet.cell(cnt, 2).value+"\n"
                 if "인사운영진" in role:
                     peoplemanager+=spreadsheet.cell(cnt, 2).value+"\n"
