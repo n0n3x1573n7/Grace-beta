@@ -23,6 +23,8 @@ BETA_TESTLAB=486550288686120961
 
 TESTING=ALPHA or BETA
 
+sheet_name='temp'
+
 channels={
     '내전신청':    469109911016570890,
     '활동로그':    513694118472450048,
@@ -113,7 +115,7 @@ async def get_worksheet():
 
     sheet=auth.open_by_url(addr)
     try:
-        worksheet=sheet.worksheet('temp')
+        worksheet=sheet.worksheet(sheet_name)
     except gspread.exceptions.APIError:
         for gamble_channel in gamble_channels:
             await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
