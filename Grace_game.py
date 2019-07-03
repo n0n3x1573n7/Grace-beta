@@ -133,20 +133,16 @@ class Internal():
         self.set_opener(opener)
         self.set_time(time)
 
-    def change_opener(self,new_opener):
-        ws=await get_worksheet()
-        ws.update_cell(1,1,new_opener.mention)
-
-    def get_opener(self):
+    async def get_opener(self):
         ws=await get_worksheet()
         return get_member_from_mention(ws.cell(1,1).value)
 
-    def get_players(self):
+    async def get_players(self):
         ws=await get_worksheet()
         val=await get_all_players(ws)
         return [*map(get_memeber_from_mention,val)]
 
-    def add_player(self,new_player):
+    async def add_player(self,new_player):
         ws=await get_worksheet()
         try:
             val=ws.findall(new_player.mention)
@@ -156,7 +152,7 @@ class Internal():
         else:
             return False
 
-    def remove_player(self,new_player):
+    async def remove_player(self,new_player):
         ws=await get_worksheet()
         try:
             val=ws.findall(new_player.mention)
@@ -167,30 +163,30 @@ class Internal():
             ws.delete_row(val[-1].row)
             return True
 
-    def open_additional(self):
+    async def open_additional(self):
         ws=await get_worksheet()
         if ws.cell(3,1).value=='0':
             ws.update_cell(3,1,'1')
             return True
         return False
 
-    def set_time(self, time):
+    async def set_time(self, time):
         ws=await get_worksheet()
         ws.update_cell(2,1,repr(time))
 
-    def set_opener(self, opener):
+    async def set_opener(self, opener):
         ws=await get_worksheet()
         ws.update_cell(1,1,opener.mention)
 
-    def get_time(self):
+    async def get_time(self):
         ws=await get_worksheet()
         return eval(ws.cell(2,1))
 
-    def is_additional_opened(self):
+    async def is_additional_opened(self):
         ws=await get_worksheet()
         return ws.cell(3,1).value=='1'
 
-    def close(self):
+    async def close(self):
         ws=await get_worksheet()
         rows=ws.row_count
         for _ in range(4,rows+1):
@@ -205,7 +201,7 @@ async def 내전개최(message):
     if message.channel.id!=channels['내전신청']:
         return
     if current_game is not None:
-        await message.channel.send("이미 {}에 내전이 예정되어 있습니다.".format(str(current_game.get_time())[:-3]))
+        await message.channel.send("이미 {}에 내전이 예정되어 있습니다.".format(str(await current_game.get_time())[:-3]))
         return
     
     opener=author(message)
@@ -227,7 +223,7 @@ async def 내전개최(message):
 
     current_game=await Internal(opener, time)
 
-    msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.get_time())[:-3], current_game.get_opener().mention)
+    msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(await current_game.get_time())[:-3], await current_game.get_opener().mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -257,10 +253,10 @@ async def 시간변경(message):
         await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
         return
     
-    prev_time=current_game.get_time()
-    current_game.set_time(time)
+    prev_time=await current_game.get_time()
+    await current_game.set_time(time)
 
-    msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(current_game.get_time())[:-3], current_game.get_opener().mention)
+    msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(await current_game.get_time())[:-3], await current_game.get_opener().mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -274,7 +270,7 @@ async def 내전확인(message):
         await message.channel.send("내전이 예정되어 있지 않습니다.")
 
     else:
-        msg="{}\n{} 내전 신청이 열려 있습니다.\n개최자: {}".format(author(message).mention, str(current_game.get_time())[:-3], current_game.get_opener().mention)
+        msg="{}\n{} 내전 신청이 열려 있습니다.\n개최자: {}".format(author(message).mention, str(await current_game.get_time())[:-3], await current_game.get_opener().mention)
         await message.channel.send(msg)
 
 @client.command()
@@ -288,13 +284,13 @@ async def 개최자변경(message):
         return
 
     prev_opener=author(message)
-    if prev_opener!=current_game.get_opener() and (not is_moderator(prev_opener)):
+    if prev_opener!=await current_game.get_opener() and (not is_moderator(prev_opener)):
         await message.channel.send("내전 개최자 또는 운영진만 개최자를 변경할 수 있습니다.")
         return
 
     new_opener=message.message.mentions[0]
-    current_game.set_opener(new_opener)
-    msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(current_game.get_time())[:-3], current_game.get_opener().mention)
+    await current_game.set_opener(new_opener)
+    msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(await current_game.get_time())[:-3], await current_game.get_opener().mention)
     await message.channel.send(msg)
 
 @client.command()
@@ -308,20 +304,20 @@ async def 내전종료(message):
         return
 
     closer=author(message)
-    if closer!=current_game.get_opener() and (not is_moderator(closer)):
+    if closer!=await current_game.get_opener() and (not is_moderator(closer)):
         await message.channel.send("내전 개최자 또는 운영진만 내전을 종료할 수 있습니다.")
         return
     
     logchannel=message.message.guild.get_channel(channels['활동로그'])
 
-    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(current_game.get_time())[:-3], current_game.get_opener().nick.split('/')[0])
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(await current_game.get_time())[:-3], await current_game.get_opener().nick.split('/')[0])
     cnt=1
-    for user in current_game.get_players():
+    for user in await current_game.get_players():
         log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
 
-    current_game.close()
+    await current_game.close()
     current_game=None
 
     await logchannel.send(log)
@@ -338,12 +334,12 @@ async def 목록(message):
         return
 
     embed=discord.Embed(title="내전 참가자 목록")
-    embed.add_field(name="일시",value=str(current_game.get_time())[:-3], inline=True)
-    embed.add_field(name="개최자",value=current_game.get_opener().nick.split('/')[0], inline=False)
+    embed.add_field(name="일시",value=str(await current_game.get_time())[:-3], inline=True)
+    embed.add_field(name="개최자",value=await current_game.get_opener().nick.split('/')[0], inline=False)
 
     log=""
     cnt=0
-    for user in current_game.get_players():
+    for user in await current_game.get_players():
         cnt+=1
         log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
     log+='\n\n내전 신청자 총 {}명'.format(cnt)
@@ -362,11 +358,11 @@ async def 추가신청허용(message):
         return
 
     opener=author(message)
-    if opener!=current_game.get_opener() and (not is_moderator(opener)):
+    if opener!=await current_game.get_opener() and (not is_moderator(opener)):
         await message.channel.send("내전 개최자 또는 운영진만 추가신청을 허용할 수 있습니다.")
         return
 
-    if not current_game.open_additional():
+    if not await current_game.open_additional():
         await message.channel.send("추가신청이 이미 허용되어 있습니다.")
         return
 
@@ -384,12 +380,12 @@ async def 신청(message):
 
     player=author(message)
 
-    if current_game.is_additional_opened()==False and\
-       (timedelta(minutes=-9)<current_time()-current_game.get_time()<timedelta(hours=1)):
+    if await current_game.is_additional_opened()==False and\
+       (timedelta(minutes=-9)<current_time()-await current_game.get_time()<timedelta(hours=1)):
         await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
         return
 
-    if current_game.add_player(player):
+    if await current_game.add_player(player):
         await message.channel.send("{}님의 신청이 완료되었습니다.".format(player.mention))
         return
 
@@ -407,11 +403,11 @@ async def 취소(message):
 
     player=author(message)
 
-    if current_game.get_time()-current_time()<timedelta(minutes=9):
+    if await current_game.get_time()-current_time()<timedelta(minutes=9):
         await message.channel.send("신청 취소가 불가합니다.")
         return
 
-    if current_game.remove_player(player):
+    if await current_game.remove_player(player):
         await message.channel.send("{}님의 신청 취소가 완료되었습니다.".format(player.mention))
         return
 
@@ -428,7 +424,7 @@ async def 임의신청(message):
         return
 
     opener=author(message)
-    if opener!=current_game.get_opener() and (not is_moderator(opener)):
+    if opener!=await current_game.get_opener() and (not is_moderator(opener)):
         await message.channel.send("내전 개최자 또는 운영진만 임의신청이 가능합니다.")
         return
 
@@ -442,7 +438,7 @@ async def 임의신청(message):
                 raise Exception
         except:
             continue
-        if current_game.add_player(player):
+        if await current_game.add_player(player):
             await message.channel.send("{}님의 임의신청이 완료되었습니다.".format(player.mention))
         else:
             await message.channel.send("{}님은 이미 신청된 플레이어입니다.".format(player.mention))
@@ -459,14 +455,14 @@ async def 신청반려(message):
         return
 
     opener=author(message)
-    if opener!=current_game.get_opener() and (not is_moderator(opener)):
+    if opener!=await current_game.get_opener() and (not is_moderator(opener)):
         await message.channel.send("내전 개최자 또는 운영진만 신청반려가 가능합니다.")
         return
 
     players=message.message.mentions
 
     for player in players:
-        if current_game.remove_player(player):
+        if await current_game.remove_player(player):
             await message.channel.send("{}님의 신청반려가 완료되었습니다.".format(player.mention))
         else:
             await message.channel.send("{}님은 신청되지 않은 플레이어입니다.".format(player.mention))
