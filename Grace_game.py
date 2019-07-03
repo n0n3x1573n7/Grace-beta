@@ -1,8 +1,7 @@
 import discord
 from discord.ext.commands import Bot
 import random
-import datetime
-from datetime import datetime, timedelta
+import datetime.datetime
 import os
 import json
 import gspread
@@ -14,7 +13,7 @@ client=Bot(command_prefix=('~',))
 content=lambda ctx:ctx.message.content
 author=lambda ctx:ctx.message.author
 channel=lambda ctx:ctx.message.channel.id
-current_time=lambda:datetime.utcnow()+timedelta(hours=9)
+current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 
 ALPHA=False
 ALPHA_TESTLAB=463694274190376981
@@ -223,7 +222,7 @@ async def 내전개최(message):
         time=time[1].split(':')
         hour=int(time[0])
         minute=int(time[1])
-    time=datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
+    time=datetime.datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
 
     if time<current_time():
         await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
@@ -255,7 +254,7 @@ async def 시간변경(message):
         time=time[1].split(":")
         hour=int(time[0])
         minute=int(time[1])
-    time=datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
+    time=datetime.datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
 
     if time<current_time():
         await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
@@ -389,7 +388,7 @@ async def 신청(message):
     player=author(message)
 
     if await current_game.is_additional_opened()==False and\
-       (timedelta(minutes=-9)<current_time()-await current_game.get_time()<timedelta(hours=1)):
+       (datetime.timedelta(minutes=-9)<current_time()-await current_game.get_time()<datetime.timedelta(hours=1)):
         await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
         return
 
@@ -411,7 +410,7 @@ async def 취소(message):
 
     player=author(message)
 
-    if await current_game.get_time()-current_time()<timedelta(minutes=9):
+    if await current_game.get_time()-current_time()<datetime.timedelta(minutes=9):
         await message.channel.send("신청 취소가 불가합니다.")
         return
 
