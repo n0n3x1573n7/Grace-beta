@@ -53,11 +53,11 @@ async def on_message(message):
         roles=spreadsheet.col_values(6)
         battletags=spreadsheet.col_values(2)
         cnt = 1
-        clanmaster = "[클랜마스터]\n"
-        peoplemanager = "[인사 운영진]\n"
-        gamemanager = "[게임 운영진]\n"
-        designmanager = "[디자인 운영진]\n"
-        developmentmanager = "[개발 운영진]\n"
+        clanmaster = ":pen_ballpoint: 클랜마스터\n"
+        peoplemanager = ":construction_worker: 인사 운영진\n"
+        gamemanager = ":construction_worker: 게임 운영진\n"
+        designmanager = ":construction_worker: 디자인 운영진\n"
+        developmentmanager = ":construction_worker: 개발 운영진\n"
         
         if author=="운영진":
             for role in roles:
@@ -72,7 +72,9 @@ async def on_message(message):
                 elif "개발운영진" in role:
                     developmentmanager+=spreadsheet.cell(cnt, 2).value+"\n"
                 cnt=cnt+1
-            await message.channel.send(clanmaster+"\n"+peoplemanager+"\n"+gamemanager+"\n"+designmanager+"\n"+developmentmanager)
+            log = clanmaster+"\n"+peoplemanager+"\n"+gamemanager+"\n"+designmanager+"\n"+developmentmanager
+            embed = discord.Embed(title=":fire: 운영진 목록\n", description=log, color=0x5c0bb7)
+            await channel.send(embed=embed)
             return
 
         try:
