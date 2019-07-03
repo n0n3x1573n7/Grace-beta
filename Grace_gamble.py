@@ -114,7 +114,7 @@ def check_maintenance_state(ws):
 
 @client.command()
 async def 공사(message):
-    if message.channel.id not in gamble_channel+[gamlbe_notify]: return
+    if message.channel.id not in gamble_channels+[gamlbe_notify]: return
     commander=author(message)
     ws=await get_spreadsheet()
     if '운영진' in map(lambda x:x.name, commander.roles):
