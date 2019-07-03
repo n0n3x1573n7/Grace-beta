@@ -72,7 +72,7 @@ async def on_message(message):
                 elif "개발운영진" in role:
                     developmentmanager+=spreadsheet.cell(cnt, 2).value+"\n"
                 cnt=cnt+1
-            await message.channel.send(clanmaster+"\n"+peoplemanager+"\n"+gamemanager+"\n"+designmanager+"\n"+developmentmanager)
+            await message.channel.send("'''"+clanmaster+"\n"+peoplemanager+"\n"+gamemanager+"\n"+designmanager+"\n"+developmentmanager+"'''")
             return
 
         try:
