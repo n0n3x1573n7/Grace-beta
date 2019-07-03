@@ -100,7 +100,6 @@ async def 빠대목록(message):
 #내전 커맨드
 class Internal():
     addr='https://docs.google.com/spreadsheets/d/1iT9lW3ENsx0zFeFVKdvqXDF9OJeGMqVF9zVdgnhMcfg/edit#gid=0'
-    await client.wait_until_ready()
     grace=client.get_guild(359714850865414144)
 
     @staticmethod
@@ -539,6 +538,7 @@ async def 도움말(ctx):
 #자동 기록(이벤트)
 @client.event
 async def on_ready():
+    await client.wait_until_ready()
     print("login: Grace Game")
     print(client.user.name)
     print(client.user.id)
