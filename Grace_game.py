@@ -1,7 +1,7 @@
 import discord
 from discord.ext.commands import Bot
 import random
-import datetime.datetime
+import datetime
 import os
 import json
 import gspread
