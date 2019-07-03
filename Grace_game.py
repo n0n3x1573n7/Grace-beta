@@ -129,9 +129,12 @@ def get_member_from_mention(mention):
     return grace.get_member(m)
 
 class Internal():
-    async def __init__(self, opener, time):
+    @classmethod
+    async def create(cls, opener, time):
+        self=Internal()
         await self.set_opener(opener)
         await self.set_time(time)
+        return self
 
     async def get_opener(self):
         ws=await get_worksheet()
@@ -221,7 +224,7 @@ async def 내전개최(message):
         await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
         return
 
-    current_game=await Internal(opener, time)
+    current_game=await Internal.create(opener, time)
 
     msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(await current_game.get_time())[:-3], await current_game.get_opener().mention)
     await message.channel.send(msg)
