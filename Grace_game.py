@@ -149,7 +149,7 @@ class Internal():
     async def get_players(self):
         ws=await get_worksheet()
         val=await get_all_players(ws)
-        return [*map(get_memeber_from_mention,val)]
+        return [*map(get_member_from_mention,val)]
 
     async def add_player(self,new_player):
         ws=await get_worksheet()
