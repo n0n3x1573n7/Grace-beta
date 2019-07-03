@@ -104,8 +104,8 @@ grace=client.get_guild(359714850865414144)
 async def get_worksheet():
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
     auth=gspread.authorize(creds)
-        if creds.access_token_expired:
-            auth.login()
+    if creds.access_token_expired:
+        auth.login()
 
     sheet=auth.open_by_url(addr)
     try:
