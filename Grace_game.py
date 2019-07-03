@@ -153,25 +153,19 @@ class Internal():
 
     async def add_player(self,new_player):
         ws=await get_worksheet()
-        try:
-            val=ws.findall(new_player.mention)
-            assert val[0].row!=1
-        except:
+        val=ws.findall(new_player.mention)
+        if len(val)==0 or (len(val)==1 and val[0].row==1):
             ws.append_row([new_player.mention])
             return True
-        else:
-            return False
+        return False
 
     async def remove_player(self,new_player):
         ws=await get_worksheet()
-        try:
-            val=ws.findall(new_player.mention)
-            assert val[0].row!=1
-        except:
-            return False
-        else:
+        val=ws.findall(new_player.mention)
+        if len(val)==2 or (len(val)==1 and val[0].row!=1):
             ws.delete_row(val[-1].row)
             return True
+        return False
 
     async def open_additional(self):
         ws=await get_worksheet()
