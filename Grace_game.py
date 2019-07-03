@@ -129,9 +129,9 @@ def get_member_from_mention(mention):
     return grace.get_member(m)
 
 class Internal():
-    def __init__(self, opener, time):
-        self.set_opener(opener)
-        self.set_time(time)
+    async def __init__(self, opener, time):
+        await self.set_opener(opener)
+        await self.set_time(time)
 
     async def get_opener(self):
         ws=await get_worksheet()
