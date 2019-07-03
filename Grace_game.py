@@ -98,59 +98,54 @@ async def 빠대목록(message):
 
 ############################################################
 #내전 커맨드
-class Internal():
-    addr='https://docs.google.com/spreadsheets/d/1iT9lW3ENsx0zFeFVKdvqXDF9OJeGMqVF9zVdgnhMcfg/edit#gid=0'
-    grace=client.get_guild(359714850865414144)
+addr='https://docs.google.com/spreadsheets/d/1iT9lW3ENsx0zFeFVKdvqXDF9OJeGMqVF9zVdgnhMcfg/edit#gid=0'
+grace=client.get_guild(359714850865414144)
 
-    @staticmethod
-    async def get_worksheet(cls):
-        creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
-        auth=gspread.authorize(creds)
-
+async def get_worksheet():
+    creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
+    auth=gspread.authorize(creds)
         if creds.access_token_expired:
             auth.login()
 
-        sheet=auth.open_by_url(addr)
-        try:
-            worksheet=sheet.worksheet('players')
-        except gspread.exceptions.APIError:
-            for gamble_channel in gamble_channels:
-                await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
-            return -1
-        return worksheet
+    sheet=auth.open_by_url(addr)
+    try:
+        worksheet=sheet.worksheet('players')
+    except gspread.exceptions.APIError:
+        for gamble_channel in gamble_channels:
+            await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
+        return -1
+    return worksheet
 
-    @staticmethod
-    async def get_all_players(ws):
-        return [*map(lambda x:x[0],ws.get_all_values()[0][3:])]
+async def get_all_players(ws):
+    return [*map(lambda x:x[0],ws.get_all_values()[0][3:])]
 
-    @staticmethod
-    async def search_for_user(ws, user=None, mention=None):
-        if user!=None:
-            mention=user.mention
-        if not (mention.startswith('<@') and mention.endswith('>')):
-            return -1
-        if mention[2]!='!':
-            mention=mention[:2]+'!'+mention[2:]
-        try: 
-            return ws.find(mention).row
-        except gspread.exceptions.CellNotFound:
-            ws.append_row([mention,'0'])
-            return ws.find(mention).row
-        except gspread.exceptions.APIError:
-            for gamble_channel in gamble_channels:
-                await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
-            return -1
+async def search_for_user(ws, user=None, mention=None):
+    if user!=None:
+        mention=user.mention
+    if not (mention.startswith('<@') and mention.endswith('>')):
+        return -1
+    if mention[2]!='!':
+        mention=mention[:2]+'!'+mention[2:]
+    try: 
+        return ws.find(mention).row
+    except gspread.exceptions.CellNotFound:
+        ws.append_row([mention,'0'])
+        return ws.find(mention).row
+    except gspread.exceptions.APIError:
+        for gamble_channel in gamble_channels:
+            await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
+        return -1
 
-    @staticmethod
-    def get_member_from_mention(mention):
-        if not (mention.startswith('<@') and mention.endswith('>')):
-            return -1
-        if mention[2]!='!':
-            m=int(mention[2:-1])
-        else:
-            m=int(mention[3:-1])
-        return grace.get_member(m)
+def get_member_from_mention(mention):
+    if not (mention.startswith('<@') and mention.endswith('>')):
+        return -1
+    if mention[2]!='!':
+        m=int(mention[2:-1])
+    else:
+        m=int(mention[3:-1])
+    return grace.get_member(m)
 
+class Internal():
     def __init__(self, opener, time):
         self.set_opener(opener)
         self.set_time(time)
