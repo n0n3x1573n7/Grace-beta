@@ -138,6 +138,8 @@ class Internal():
         self=Internal()
         await self.set_opener(opener)
         await self.set_time(time)
+        ws=await get_worksheet()
+        ws.update_cell(3,1,'0')
         return self
 
     async def get_opener(self):
@@ -153,6 +155,7 @@ class Internal():
         ws=await get_worksheet()
         try:
             val=ws.findall(new_player.mention)
+            assert val[0].row!=1
         except:
             ws.append_row(new_player.mention)
             return True
@@ -163,7 +166,7 @@ class Internal():
         ws=await get_worksheet()
         try:
             val=ws.findall(new_player.mention)
-            assert len(val)!=0
+            assert val[0].row!=1
         except:
             return False
         else:
