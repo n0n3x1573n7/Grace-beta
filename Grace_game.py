@@ -188,7 +188,7 @@ class Internal():
 
     async def get_time(self):
         ws=await get_worksheet()
-        return eval(ws.cell(2,1))
+        return eval(ws.cell(2,1).value)
 
     async def is_additional_opened(self):
         ws=await get_worksheet()
