@@ -153,7 +153,6 @@ class Internal():
         except:
             return False
 
-
     async def get_opener(self):
         ws=await get_worksheet()
         return get_member_from_mention(ws.cell(1,1).value)
