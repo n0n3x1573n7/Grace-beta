@@ -1,6 +1,7 @@
 import discord
 from discord.ext.commands import Bot
 import random
+import datetime
 from datetime import datetime, timedelta
 import os
 
@@ -98,53 +99,125 @@ async def 빠대목록(message):
 ############################################################
 #내전 커맨드
 class Internal():
-    def __init__(self,opener,time):
-        self.opener=opener
-        self.time=time
-        self.players=[]
-        self.additional_opened=False
+    addr='https://docs.google.com/spreadsheets/d/1iT9lW3ENsx0zFeFVKdvqXDF9OJeGMqVF9zVdgnhMcfg/edit#gid=0'
+    await client.wait_until_ready()
+    grace=client.get_guild(359714850865414144)
 
-    def __hash__(self):
-        return hash((self.opener,self.time))
+    @staticmethod
+    async def get_worksheet(cls):
+        creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
+        auth=gspread.authorize(creds)
+
+        if creds.access_token_expired:
+            auth.login()
+
+        sheet=auth.open_by_url(addr)
+        try:
+            worksheet=sheet.worksheet('players')
+        except gspread.exceptions.APIError:
+            for gamble_channel in gamble_channels:
+                await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
+            return -1
+        return worksheet
+
+    @staticmethod
+    async def get_all_players(ws):
+        return [*map(lambda x:x[0],ws.get_all_values()[0][3:])]
+
+    @staticmethod
+    async def search_for_user(ws, user=None, mention=None):
+        if user!=None:
+            mention=user.mention
+        if not (mention.startswith('<@') and mention.endswith('>')):
+            return -1
+        if mention[2]!='!':
+            mention=mention[:2]+'!'+mention[2:]
+        try: 
+            return ws.find(mention).row
+        except gspread.exceptions.CellNotFound:
+            ws.append_row([mention,'0'])
+            return ws.find(mention).row
+        except gspread.exceptions.APIError:
+            for gamble_channel in gamble_channels:
+                await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
+            return -1
+
+    @staticmethod
+    def get_member_from_mention(mention):
+        if not (mention.startswith('<@') and mention.endswith('>')):
+            return -1
+        if mention[2]!='!':
+            m=int(mention[2:-1])
+        else:
+            m=int(mention[3:-1])
+        return grace.get_member(m)
+
+    def __init__(self, opener, time):
+        self.set_opener(opener)
+        self.set_time(time)
 
     def change_opener(self,new_opener):
-        self.opener=new_opener
+        ws=get_worksheet()
+        ws.update_cell(1,1,new_opener.mention)
 
     def get_opener(self):
-        return self.opener
+        ws=get_worksheet()
+        return get_member_from_mention(ws.cell(1,1).value)
 
     def get_players(self):
-        return self.players
+        ws=get_worksheet()
+        val=get_all_players(ws)
+        return [*map(get_memeber_from_mention,val)]
 
     def add_player(self,new_player):
-        if new_player not in self.players:
-            self.players.append(new_player)
+        ws=get_worksheet()
+        try:
+            val=ws.findall(new_player.mention)
+        except:
+            ws.append_row(new_player.mention)
             return True
-        return False
+        else:
+            return False
 
     def remove_player(self,new_player):
-        if new_player in self.players:
-            self.players.remove(new_player)
+        ws=get_worksheet()
+        try:
+            val=ws.findall(new_player.mention)
+            assert len(val)!=0
+        except:
+            return False
+        else:
+            ws.delete_row(val[-1].row)
             return True
-        return False
 
     def open_additional(self):
-        if not self.additional_opened:
-            self.additional_opened=True
+        ws=get_worksheet()
+        if ws.cell(3,1).value=='0':
+            ws.update_cell(3,1,'1')
             return True
         return False
 
     def set_time(self, time):
-        self.time=time
+        ws=get_worksheet()
+        ws.update_cell(2,1,repr(time))
 
     def set_opener(self, opener):
-        self.opener=opener
+        ws=get_worksheet()
+        ws.update_cell(1,1,opener.mention)
 
     def get_time(self):
-        return self.time
+        ws=get_worksheet()
+        return eval(ws.cell(2,1))
 
     def is_additional_opened(self):
-        return self.additional_opened
+        ws=get_worksheet()
+        return ws.cell(3,1).value=='1'
+
+    def close(self):
+        ws=get_worksheet()
+        rows=ws.row_count
+        for _ in range(4,rows+1):
+            ws.delete_row(4)
 
 current_game=None
 
@@ -175,7 +248,7 @@ async def 내전개최(message):
         await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
         return
 
-    current_game=Internal(opener, time)
+    current_game=await Internal(opener, time)
 
     msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(current_game.get_time())[:-3], current_game.get_opener().mention)
     await message.channel.send(msg)
@@ -271,6 +344,7 @@ async def 내전종료(message):
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
 
+    current_game.close()
     current_game=None
 
     await logchannel.send(log)
