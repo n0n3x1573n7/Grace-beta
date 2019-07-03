@@ -13,6 +13,7 @@ from time import sleep
 daily=2000
 
 gamble_channels=[486550288686120961]
+gamble_notify=486550288686120961
 ws_name='Beta'
 
 content=lambda ctx:ctx.message.content
@@ -100,10 +101,35 @@ async def update_money(ws, money, user=None, mention=None, checkin=False):
         ws.update_cell(row, 3, repr(current_time()))
     return 1
 
+def change_maintenance_state(ws):
+    if ws.cell(1,1).value=='under maintenance':
+        ws.update_cell(1,1,'userid')
+        return False
+    else:
+        ws.update_cell(1,1,'userid')
+        return True
+
+def check_maintenance_state(ws):
+    return ws.cell(1,1).value=='under maintenance'
+
+@client.command()
+async def 공사(message):
+    if message.channel.id!=gamble_notify: return
+    commander=author(message)
+    if '운영진' in map(lambda x:x.name, commander.roles):
+        res=change_maintenance_state(ws)
+        if res:
+            for gamble_channel in gamble_channels:
+                await client.get_channel(gamble_channel).send('그레이스 봇 보수공사 중입니다. 제발 도박을 멈춰주세요.')
+        else:
+            for gamble_channel in gamble_channels:
+                await client.get_channel(gamble_channel).send('보수공사가 종료되었습니다.')
+
 @client.command()
 async def 출석(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
+    if check_maintenance_state(): return
     user=author(message)
     if await redeemable(ws,user):
         money=await get_money(ws,user)
@@ -116,6 +142,7 @@ async def 출석(message):
 async def 확인(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
+    if check_maintenance_state(): return
     user=author(message)
     money=await get_money(ws,user)
     await message.channel.send("{}\n잔고:{}G".format(user.mention, money))
@@ -124,6 +151,7 @@ async def 확인(message):
 async def 송금(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
+    if check_maintenance_state(): return
     sender=author(message)
     money=await get_money(ws,sender)
     msg=content(message)
@@ -152,6 +180,7 @@ async def 송금(message):
 async def 동전(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
+    if check_maintenance_state(): return
     user=author(message)
     msg=content(message)
     com, choice, bet, *rest=msg.split()
@@ -197,6 +226,7 @@ async def 동전(message):
 async def 순위(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
+    if check_maintenance_state(): return
     user=author(message)
     money=await get_money(ws,user)
 
@@ -209,6 +239,7 @@ async def 순위(message):
 async def 랭킹(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
+    if check_maintenance_state(): return
     user=author(message)
     msg=content(message)
 
@@ -243,7 +274,7 @@ async def 랭킹(message):
 async def 도움말(message):
     if message.channel.id not in gamble_channels: return
     embed = discord.Embed(title="Grace gamble bot", description="그레이스 클랜 도박 봇입니다.", color=0xeee657)
-    embed.add_field(name=">출석\n",value="2000G를 받습니다. 24시간에 한 번만 사용할 수 있습니다.\n",inline=False)
+    embed.add_field(name=">출석\n",value="2000G를 받습니다. 23시간 55분에 한 번만 사용할 수 있습니다.\n",inline=False)
     embed.add_field(name=">확인\n",value="자신의 소지 G를 확인합니다.\n",inline=False)
     embed.add_field(name=">송금 (멘션) (금액)\n",value="멘션한 사람에게 언급된 금액을 송금합니다.\n",inline=False)
     embed.add_field(name=">동전 [앞/뒤] (금액)\n",value="G를 걸고, 동전을 던집니다. 맞추면 두 배로 돌려받고, 틀리면 돌려받지 못합니다.\n0G를 소지중이라면 1G를 걸어 성공시 1G를 받을 수 있습니다.",inline=False)
