@@ -130,7 +130,8 @@ async def 공사(message):
 async def 출석(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state(): return
+    if check_maintenance_state():
+        await message.channel.send("진정하시라고요.")
     user=author(message)
     if await redeemable(ws,user):
         money=await get_money(ws,user)
@@ -143,7 +144,8 @@ async def 출석(message):
 async def 확인(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state(): return
+    if check_maintenance_state():
+        await message.channel.send("진정하시라고요.")
     user=author(message)
     money=await get_money(ws,user)
     await message.channel.send("{}\n잔고:{}G".format(user.mention, money))
@@ -152,7 +154,8 @@ async def 확인(message):
 async def 송금(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state(): return
+    if check_maintenance_state():
+        await message.channel.send("진정하시라고요.")
     sender=author(message)
     money=await get_money(ws,sender)
     msg=content(message)
@@ -181,7 +184,8 @@ async def 송금(message):
 async def 동전(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state(): return
+    if check_maintenance_state():
+        await message.channel.send("진정하시라고요.")
     user=author(message)
     msg=content(message)
     com, choice, bet, *rest=msg.split()
@@ -227,7 +231,8 @@ async def 동전(message):
 async def 순위(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state(): return
+    if check_maintenance_state():
+        await message.channel.send("진정하시라고요.")
     user=author(message)
     money=await get_money(ws,user)
 
@@ -240,7 +245,8 @@ async def 순위(message):
 async def 랭킹(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state(): return
+    if check_maintenance_state():
+        await message.channel.send("진정하시라고요.")
     user=author(message)
     msg=content(message)
 
