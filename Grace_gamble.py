@@ -106,7 +106,7 @@ def change_maintenance_state(ws):
         ws.update_cell(1,1,'userid')
         return False
     else:
-        ws.update_cell(1,1,'userid')
+        ws.update_cell(1,1,'under maintenance')
         return True
 
 def check_maintenance_state(ws):
