@@ -116,6 +116,7 @@ def check_maintenance_state(ws):
 async def 공사(message):
     if message.channel.id!=gamble_notify: return
     commander=author(message)
+    ws=await get_spreadsheet()
     if '운영진' in map(lambda x:x.name, commander.roles):
         res=change_maintenance_state(ws)
         if res:
