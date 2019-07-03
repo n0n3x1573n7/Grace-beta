@@ -142,6 +142,18 @@ class Internal():
         ws.update_cell(3,1,'0')
         return self
 
+    @classmethod
+    async def check_integrity(cls):
+        temp=Internal()
+        try:
+            opener=await temp.get_opener()
+            time=await temp.get_time()
+            assert isinstance(opener, discord.Member) and isinstance(time, datetime.datetime)
+            return True
+        except:
+            return False
+
+
     async def get_opener(self):
         ws=await get_worksheet()
         return get_member_from_mention(ws.cell(1,1).value)
@@ -197,6 +209,16 @@ class Internal():
             ws.delete_row(4)
 
 current_game=None
+
+@client.command()
+async def 업데이트(message):
+    global current_game
+    if Internal.check_integrity():
+        current_game=Internal()
+        msg="내전 설정이 업데이트되었습니다."
+    else:
+        msg="저장된 내전이 없습니다."
+    await message.channel.send(msg)
 
 @client.command()
 async def 내전개최(message):
@@ -490,6 +512,7 @@ async def 도움말(ctx):
         embed.add_field(name="내전신청방",value="\u200B",inline=False)
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="!내전개최 hh:mm",value="내전을 주어진 시각에 개최합니다. 시각을 주지 않으면 21시로 설정됩니다.\n",inline=False)
+        embed.add_field(name="!업데이트",value="내전 중 봇의 오류가 났다면 업데이트를 통해 내전 설정을 업데이트 할 수 있습니다.\n",inline=False)
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="내전 개최자 및 운영진만 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="!개최자변경 @사용자\n",value="개최자를 멘션한 사용자로 변경합니다.\n",inline=False)
