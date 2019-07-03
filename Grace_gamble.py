@@ -130,7 +130,7 @@ async def 공사(message):
 async def 출석(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state():
+    if check_maintenance_state(ws):
         await message.channel.send("진정하시라고요.")
         return
     user=author(message)
@@ -145,7 +145,7 @@ async def 출석(message):
 async def 확인(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state():
+    if check_maintenance_state(ws):
         await message.channel.send("진정하시라고요.")
         return
     user=author(message)
@@ -156,7 +156,7 @@ async def 확인(message):
 async def 송금(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state():
+    if check_maintenance_state(ws):
         await message.channel.send("진정하시라고요.")
         return
     sender=author(message)
@@ -187,7 +187,7 @@ async def 송금(message):
 async def 동전(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state():
+    if check_maintenance_state(ws):
         await message.channel.send("진정하시라고요.")
         return
     user=author(message)
@@ -235,7 +235,7 @@ async def 동전(message):
 async def 순위(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state():
+    if check_maintenance_state(ws):
         await message.channel.send("진정하시라고요.")
         return
     user=author(message)
@@ -250,7 +250,7 @@ async def 순위(message):
 async def 랭킹(message):
     if message.channel.id not in gamble_channels: return
     ws=await get_spreadsheet()
-    if check_maintenance_state():
+    if check_maintenance_state(ws):
         await message.channel.send("진정하시라고요.")
         return
     user=author(message)
