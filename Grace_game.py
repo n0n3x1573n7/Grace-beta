@@ -112,29 +112,12 @@ async def get_worksheet():
         worksheet=sheet.worksheet('players')
     except gspread.exceptions.APIError:
         for gamble_channel in gamble_channels:
-            await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
+            await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
         return -1
     return worksheet
 
 async def get_all_players(ws):
     return [*map(lambda x:x[0],ws.get_all_values()[0][3:])]
-
-async def search_for_user(ws, user=None, mention=None):
-    if user!=None:
-        mention=user.mention
-    if not (mention.startswith('<@') and mention.endswith('>')):
-        return -1
-    if mention[2]!='!':
-        mention=mention[:2]+'!'+mention[2:]
-    try: 
-        return ws.find(mention).row
-    except gspread.exceptions.CellNotFound:
-        ws.append_row([mention,'0'])
-        return ws.find(mention).row
-    except gspread.exceptions.APIError:
-        for gamble_channel in gamble_channels:
-            await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 제발 진정하시고 잠시후 다시 시도해주세요.")
-        return -1
 
 def get_member_from_mention(mention):
     if not (mention.startswith('<@') and mention.endswith('>')):
@@ -151,20 +134,20 @@ class Internal():
         self.set_time(time)
 
     def change_opener(self,new_opener):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         ws.update_cell(1,1,new_opener.mention)
 
     def get_opener(self):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         return get_member_from_mention(ws.cell(1,1).value)
 
     def get_players(self):
-        ws=get_worksheet()
-        val=get_all_players(ws)
+        ws=await get_worksheet()
+        val=await get_all_players(ws)
         return [*map(get_memeber_from_mention,val)]
 
     def add_player(self,new_player):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         try:
             val=ws.findall(new_player.mention)
         except:
@@ -174,7 +157,7 @@ class Internal():
             return False
 
     def remove_player(self,new_player):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         try:
             val=ws.findall(new_player.mention)
             assert len(val)!=0
@@ -185,30 +168,30 @@ class Internal():
             return True
 
     def open_additional(self):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         if ws.cell(3,1).value=='0':
             ws.update_cell(3,1,'1')
             return True
         return False
 
     def set_time(self, time):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         ws.update_cell(2,1,repr(time))
 
     def set_opener(self, opener):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         ws.update_cell(1,1,opener.mention)
 
     def get_time(self):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         return eval(ws.cell(2,1))
 
     def is_additional_opened(self):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         return ws.cell(3,1).value=='1'
 
     def close(self):
-        ws=get_worksheet()
+        ws=await get_worksheet()
         rows=ws.row_count
         for _ in range(4,rows+1):
             ws.delete_row(4)
