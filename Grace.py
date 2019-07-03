@@ -73,7 +73,7 @@ async def on_message(message):
                     developmentmanager+=spreadsheet.cell(cnt, 2).value+"\n"
                 cnt=cnt+1
             log = clanmaster+"\n"+peoplemanager+"\n"+gamemanager+"\n"+designmanager+"\n"+developmentmanager
-            embed = discord.Embed(title="운영진 목록", description=log, color=0x5c0bb7)
+            embed = discord.Embed(title=":fire: 운영진 목록\n", description=log, color=0x5c0bb7)
             await channel.send(embed=embed)
             return
 
