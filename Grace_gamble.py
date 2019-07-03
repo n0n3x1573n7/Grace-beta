@@ -132,6 +132,7 @@ async def 출석(message):
     ws=await get_spreadsheet()
     if check_maintenance_state():
         await message.channel.send("진정하시라고요.")
+        return
     user=author(message)
     if await redeemable(ws,user):
         money=await get_money(ws,user)
@@ -146,6 +147,7 @@ async def 확인(message):
     ws=await get_spreadsheet()
     if check_maintenance_state():
         await message.channel.send("진정하시라고요.")
+        return
     user=author(message)
     money=await get_money(ws,user)
     await message.channel.send("{}\n잔고:{}G".format(user.mention, money))
@@ -156,6 +158,7 @@ async def 송금(message):
     ws=await get_spreadsheet()
     if check_maintenance_state():
         await message.channel.send("진정하시라고요.")
+        return
     sender=author(message)
     money=await get_money(ws,sender)
     msg=content(message)
@@ -186,6 +189,7 @@ async def 동전(message):
     ws=await get_spreadsheet()
     if check_maintenance_state():
         await message.channel.send("진정하시라고요.")
+        return
     user=author(message)
     msg=content(message)
     com, choice, bet, *rest=msg.split()
@@ -233,6 +237,7 @@ async def 순위(message):
     ws=await get_spreadsheet()
     if check_maintenance_state():
         await message.channel.send("진정하시라고요.")
+        return
     user=author(message)
     money=await get_money(ws,user)
 
@@ -247,6 +252,7 @@ async def 랭킹(message):
     ws=await get_spreadsheet()
     if check_maintenance_state():
         await message.channel.send("진정하시라고요.")
+        return
     user=author(message)
     msg=content(message)
 
