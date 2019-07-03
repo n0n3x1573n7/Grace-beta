@@ -84,7 +84,7 @@ async def redeemable(ws, user=None, mention=None):
     ct=ws.cell(row,3).value
     if ct:
         time=eval(ct)
-        return current_time()-time>=datetime.timedelta(days=1)
+        return current_time()-time>=datetime.timedelta(days=1, minutes=-5)
     else:
         return True
 
@@ -266,7 +266,8 @@ async def periodic_ranking():
         data.sort(key=lambda x:int(x[1]), reverse=True)
 
         maxrank=10
-        log="현재 랭킹"
+        c=current_time()
+        log="{}년 {}월 {}일 일일 랭킹".format(c.year, c.month, c.day)
         cnt=0
         par_cnt=1
         prev_money=-1

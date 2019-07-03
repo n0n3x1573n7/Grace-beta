@@ -113,7 +113,7 @@ async def get_worksheet():
 
     sheet=auth.open_by_url(addr)
     try:
-        worksheet=sheet.worksheet('players')
+        worksheet=sheet.worksheet('temp')
     except gspread.exceptions.APIError:
         for gamble_channel in gamble_channels:
             await client.get_channel(gamble_channel).send("API 호출 횟수에 제한이 걸렸습니다. 잠시후 다시 시도해주세요.")
