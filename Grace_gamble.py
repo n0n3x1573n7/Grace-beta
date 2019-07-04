@@ -76,17 +76,18 @@ async def get_money(ws,user=None,mention=None):
     return int(ws.cell(row,2).value)
 
 async def redeemable(ws, user=None, mention=None):
+    checkin_timedelta=datetime.timedelta(days=1, minutes=-5)
     if user!=None:
         row=await get_row(ws,user)
     else:
         row=await get_row(ws,mention=mention)
     if row==-1:
-        return False, datetime.timedelta(days=1, minutes=-5)
+        return False, checkin_timedelta
     ct=ws.cell(row,3).value
     if ct:
         time=eval(ct)
         td=current_time()-time
-        return td>=datetime.timedelta(days=1, minutes=-5), td
+        return td>=checkin_timedelta, checkin_timedelta-td
     else:
         return True, datetime.timedelta()
 
