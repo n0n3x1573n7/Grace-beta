@@ -208,6 +208,9 @@ class Internal():
         rows=ws.row_count
         for _ in range(4,rows+1):
             ws.delete_row(4)
+        ws.update_cell(1,1,'')
+        ws.update_cell(2,1,'')
+        ws.update_cell(3,1,'')
 
 current_game=None
 
@@ -337,9 +340,9 @@ async def 내전종료(message):
     
     logchannel=message.message.guild.get_channel(channels['활동로그'])
 
-    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(await current_game.get_time())[:-3], await current_game.get_opener().nick.split('/')[0])
+    log="{} 내전 참가자 목록\n\n개최자: {}\n".format(str(await current_game.get_time())[:-3], (await current_game.get_opener()).nick.split('/')[0])
     cnt=1
-    for user in await current_game.get_players():
+    for user in (await current_game.get_players()):
         log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
