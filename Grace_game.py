@@ -279,14 +279,21 @@ async def 시간변경(message):
         hour=21
         minute=0
     else:
-        time=time[1].split(":")
+        time=time[1].split(':')
         hour=int(time[0])
         minute=int(time[1])
-    time=datetime.datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
+        hour24=False
+        if hour>12:
+            hour24=True
+    time=datetime.datetime(year=current.year, month=current.month, day=current.day, hour=0, minute=0)\
+         +datetime.timedelta(hours=hour, minutes=minute)
 
-    if time<current_time():
-        await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
-        return
+    while time<current_time():
+        if hour24:
+            time+=datetime.timedelta(hours=24)
+        else:
+            time+=datetime.timedelta(hours=12)
+    current_game=await Internal.create(opener, time)
     
     prev_time=await current_game.get_time()
     await current_game.set_time(time)
