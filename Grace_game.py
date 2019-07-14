@@ -245,12 +245,17 @@ async def 내전개최(message):
         time=time[1].split(':')
         hour=int(time[0])
         minute=int(time[1])
-    time=datetime.datetime(year=current.year, month=current.month, day=current.day, hour=hour, minute=minute)
+        hour24=False
+        if hour>12:
+            hour24=True
+    time=datetime.datetime(year=current.year, month=current.month, day=current.day, hour=0, minute=0)\
+         +datetime.timedelta(hours=hour, minutes=minute)
 
-    if time<current_time():
-        await message.channel.send("이미 지난 시각입니다. 24시간제 표기를 사용해주세요.")
-        return
-
+    while time<current_time():
+        if hour24:
+            time+=datetime.timedelta(hours=24)
+        else:
+            time+=datetime.timedelta(hours=12)
     current_game=await Internal.create(opener, time)
 
     msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(await current_game.get_time())[:-3], (await current_game.get_opener()).mention)
