@@ -8,22 +8,18 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import asyncio
 
-client=Bot(command_prefix=('~',))
+client=Bot(command_prefix=('!',))
 
 content=lambda ctx:ctx.message.content
 author=lambda ctx:ctx.message.author
 channel=lambda ctx:ctx.message.channel.id
 current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 
-ALPHA=False
-ALPHA_TESTLAB=463694274190376981
-
 BETA=True
 BETA_TESTLAB=486550288686120961
 
-TESTING=ALPHA or BETA
-
 sheet_name='temp'
+record_name='temp_record'
 
 channels={
     '내전신청':    469109911016570890,
@@ -43,10 +39,6 @@ roles={
 if BETA:
     for _ in channels:
         channels[_]=BETA_TESTLAB
-
-if ALPHA:
-    for _ in channels:
-        channels[_]=ALPHA_TESTLAB
 
 def is_moderator(member):
     return "운영진" in map(lambda x:x.name, member.roles)
@@ -107,7 +99,7 @@ addr='https://docs.google.com/spreadsheets/d/1iT9lW3ENsx0zFeFVKdvqXDF9OJeGMqVF9z
 scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 grace=None
 
-async def get_worksheet():
+async def get_worksheet(sheet_name=sheet_name):
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
     auth=gspread.authorize(creds)
     if creds.access_token_expired:
@@ -211,6 +203,11 @@ class Internal():
         ws.update_cell(1,1,'')
         ws.update_cell(2,1,'')
         ws.update_cell(3,1,'')
+
+    async def leave_record(self):
+        ws=await get_worksheet(record_name)
+        for user in await current_game.get_players():
+        ws.append_row([user.mention])
 
 current_game=None
 
@@ -361,6 +358,7 @@ async def 내전종료(message):
         cnt+=1
     log+='\n\n내전 신청자 총 {}명'.format(cnt-1)
 
+    await current_game.leave_record()
     await current_game.close()
     current_game=None
 
