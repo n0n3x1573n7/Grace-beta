@@ -119,7 +119,7 @@ class Internal():
 
     async def check_availability(self,new_player):
         ws=await get_worksheet(record_name)
-        return len(ws.findall(new_player.mention))!=0
+        return len(ws.findall(new_player.mention))
 
     async def add_player(self,new_player):
         ws=await get_worksheet(sheet_name)
