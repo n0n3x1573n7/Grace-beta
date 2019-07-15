@@ -117,9 +117,9 @@ class Internal():
         val=await get_all_players(ws)
         return [*map(get_member_from_mention,val)]
 
-    async def check_availability(self,new_player):
+    async def check_availability(self,player):
         ws=await get_worksheet(record_name)
-        return len(ws.findall(new_player.mention))
+        return len(ws.findall(player.mention))!=0
 
     async def add_player(self,new_player):
         ws=await get_worksheet(sheet_name)
