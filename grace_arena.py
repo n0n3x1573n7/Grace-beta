@@ -63,7 +63,7 @@ addr='https://docs.google.com/spreadsheets/d/1iT9lW3ENsx0zFeFVKdvqXDF9OJeGMqVF9z
 scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 grace=None
 
-async def get_worksheet(sheet_name):
+async def get_worksheet(sheet_name=sheet_name):
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
     auth=gspread.authorize(creds)
     if creds.access_token_expired:
@@ -138,7 +138,7 @@ class Internal():
         return False
 
     async def get_time(self):
-        ws=await get_worksheet()
+        ws=await get_worksheet(sheet_name)
         return eval(ws.cell(1,1).value)
 
     async def close(self):
