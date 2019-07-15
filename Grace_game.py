@@ -515,7 +515,7 @@ async def 신청반려(message):
 invalid_channels=(channels['테스트'],channels['카지노'])
 @client.command()
 async def 도움말(ctx):
-    if (ALPHA or BETA) and ctx.channel.id not in invalid_channels:
+    if (not BETA and ctx.channel.id not in invalid_channels) or (BETA and ctx.channel.id==BETA_TESTLAB):
         return
     embed = discord.Embed(title="Grace bot", description="그레이스 클랜 봇입니다.", color=0xeee657)
     embed.add_field(name="\u200B",value="\u200B",inline=False)
