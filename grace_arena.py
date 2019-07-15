@@ -248,7 +248,7 @@ async def 신청(message):
         await message.channel.send("신청이 마감되었습니다.")
         return
 
-    if await current_game.check_availability(player):
+    if not await current_game.check_availability(player):
         await message.channel.send("{}님은 내전 최소 기준을 충족하지 못해 신청이 불가능합니다.".format(player.mention))
         return
 
@@ -341,7 +341,7 @@ async def auto_open():
     global current_game
     cur=current_time()
 
-    arenachannel=message.message.guild.get_channel(channels['Arena'])
+    arenachannel=grace.get_channel(channels['Arena'])
 
     daydelta=WEEKDAY-cur.weekday()
     if daydelta<0:
@@ -370,7 +370,7 @@ async def on_ready():
     global grace
     await client.wait_until_ready()
     grace=client.get_guild(359714850865414144)
-    print("login: Grace Game")
+    print("login: Grace Arena")
     print(client.user.name)
     print(client.user.id)
     print("---------------")
