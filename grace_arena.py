@@ -151,7 +151,7 @@ class Internal():
 @client.command()
 async def 업데이트(message):
     global current_game
-    if Internal.check_integrity():
+    if await Internal.check_integrity():
         current_game=Internal()
         msg="아레나 설정이 업데이트되었습니다."
     else:
@@ -339,6 +339,10 @@ async def 신청반려(message):
 @client.event
 async def auto_open():
     global current_game
+    global grace
+    await client.wait_until_ready()
+    grace=client.get_guild(359714850865414144)
+    
     cur=current_time()
 
     arenachannel=grace.get_channel(channels['Arena'])
@@ -367,9 +371,6 @@ async def auto_open():
 #자동 기록(이벤트)
 @client.event
 async def on_ready():
-    global grace
-    await client.wait_until_ready()
-    grace=client.get_guild(359714850865414144)
     print("login: Grace Arena")
     print(client.user.name)
     print(client.user.id)

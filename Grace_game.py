@@ -214,7 +214,7 @@ current_game=None
 @client.command()
 async def 업데이트(message):
     global current_game
-    if Internal.check_integrity():
+    if await Internal.check_integrity():
         current_game=Internal()
         msg="내전 설정이 업데이트되었습니다."
     else:
