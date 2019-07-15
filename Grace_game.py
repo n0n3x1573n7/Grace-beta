@@ -207,7 +207,7 @@ class Internal():
     async def leave_record(self):
         ws=await get_worksheet(record_name)
         for user in await current_game.get_players():
-        ws.append_row([user.mention])
+            ws.append_row([user.mention])
 
 current_game=None
 
