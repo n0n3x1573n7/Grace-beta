@@ -78,25 +78,24 @@ async def on_message(message):
             return
 
         nickname = spreadsheet.col_values(3)
-
+        
         try:
-            nickname.find(author)
+            index = nickname.index(author)
+            print(index)
         except gspread.exceptions.CellNotFound:
             return
         except gspread.exceptions.APIError:
             return
-        cell = nickname.find(author)
-        row = cell.row
         
-        battletag = spreadsheet.cell(row, 2).value
-        link = spreadsheet.cell(row, 4).value
-        description = spreadsheet.cell(row, 5).value
-        role = spreadsheet.cell(row, 6).value
-        imagelink = spreadsheet.cell(row, 7).value
-        thumbnaillink = spreadsheet.cell(row, 8).value
-        arena = spreadsheet.cell(row, 9).value
-        league_first = spreadsheet.cell(row, 10).value
-        league_second = spreadsheet.cell(row, 11).value
+        battletag = spreadsheet.cell(index, 2).value
+        link = spreadsheet.cell(index, 4).value
+        description = spreadsheet.cell(index, 5).value
+        role = spreadsheet.cell(index, 6).value
+        imagelink = spreadsheet.cell(index, 7).value
+        thumbnaillink = spreadsheet.cell(index, 8).value
+        arena = spreadsheet.cell(index, 9).value
+        league_first = spreadsheet.cell(index, 10).value
+        league_second = spreadsheet.cell(index, 11).value
 
         if role == "클랜마스터":
             roleimage = ":pen_ballpoint:"
