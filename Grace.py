@@ -77,8 +77,8 @@ async def on_message(message):
             await channel.send(embed=embed)
             return
 
-        nickname = spreadsheet.cell(row, 3).value
-        
+        nickname = spreadsheet.col_values(3)
+
         try:
             nickname.find(author)
         except gspread.exceptions.CellNotFound:
