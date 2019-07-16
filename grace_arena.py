@@ -341,11 +341,11 @@ async def 아레나(message):
         await message.channel.send("역할 제거가 완료되었습니다.")
     if team=='1':
         for player in players:
-            await players.add_roles(arena1, atomic=True)
+            await player.add_roles(arena1, atomic=True)
         await message.channel.send("역할 부여가 완료되었습니다.")
     if team=='2':
         for player in players:
-            await players.add_roles(arena2, atomic=True)
+            await player.add_roles(arena2, atomic=True)
         await message.channel.send("역할 부여가 완료되었습니다.")
 
 @client.command()#TODO
