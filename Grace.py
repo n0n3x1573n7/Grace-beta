@@ -94,7 +94,7 @@ async def on_message(message):
             return
         except gspread.exceptions.APIError:
             return
-        cell = spreadsheet.find(author)
+        cell = nickname.find(author)
         row = cell.row
 
         if role == "클랜마스터":
