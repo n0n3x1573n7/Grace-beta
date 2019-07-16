@@ -77,16 +77,7 @@ async def on_message(message):
             await channel.send(embed=embed)
             return
 
-        battletag = spreadsheet.cell(row, 2).value
         nickname = spreadsheet.cell(row, 3).value
-        link = spreadsheet.cell(row, 4).value
-        description = spreadsheet.cell(row, 5).value
-        role = spreadsheet.cell(row, 6).value
-        imagelink = spreadsheet.cell(row, 7).value
-        thumbnaillink = spreadsheet.cell(row, 8).value
-        arena = spreadsheet.cell(row, 9).value
-        league_first = spreadsheet.cell(row, 10).value
-        league_second = spreadsheet.cell(row, 11).value
         
         try:
             nickname.find(author)
@@ -96,6 +87,16 @@ async def on_message(message):
             return
         cell = nickname.find(author)
         row = cell.row
+        
+        battletag = spreadsheet.cell(row, 2).value
+        link = spreadsheet.cell(row, 4).value
+        description = spreadsheet.cell(row, 5).value
+        role = spreadsheet.cell(row, 6).value
+        imagelink = spreadsheet.cell(row, 7).value
+        thumbnaillink = spreadsheet.cell(row, 8).value
+        arena = spreadsheet.cell(row, 9).value
+        league_first = spreadsheet.cell(row, 10).value
+        league_second = spreadsheet.cell(row, 11).value
 
         if role == "클랜마스터":
             roleimage = ":pen_ballpoint:"
