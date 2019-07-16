@@ -97,6 +97,8 @@ async def on_message(message):
         league_first = spreadsheet.cell(index, 10).value
         league_second = spreadsheet.cell(index, 11).value
 
+        print(battletag)
+        print(role)
         if role == "클랜마스터":
             roleimage = ":pen_ballpoint:"
         elif "운영진" in role:
