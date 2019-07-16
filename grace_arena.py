@@ -117,6 +117,10 @@ class Internal():
         val=await get_all_players(ws)
         return [*map(get_member_from_mention,val)]
 
+    async def set_time(self, time):
+        ws=await get_worksheet()
+        ws.update_cell(1,1,repr(time))
+
     async def check_availability(self,player):
         ws=await get_worksheet(record_name)
         return len(ws.findall(player.mention))!=0
@@ -185,37 +189,6 @@ async def 확인(message):
         else:
             msg+="진행중입니다."
         await message.channel.send(msg)
-
-@client.command()#TODO
-async def 종료(message):
-    global current_game
-
-    if message.channel.id!=channels['Arena']:
-        return
-    if current_game is None:
-        await message.channel.send("신청중인 아레나가 없습니다.")
-        return
-
-    closer=author(message)
-    if not is_moderator(closer):
-        await message.channel.send("운영진만 아레나를 종료할 수 있습니다.")
-        return
-    
-    logchannel=message.message.guild.get_channel(channels['활동로그'])
-
-    log="{} 아레나 참가자 목록\n".format(str(await current_game.get_time())[:10])
-    cnt=1
-    for user in (await current_game.get_players()):
-        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
-        if cnt==12:
-            break
-        cnt+=1
-
-    await current_game.close()
-    current_game=None
-
-    await logchannel.send(log)
-    await message.channel.send("아레나가 종료되었습니다.")
 
 @client.command()
 async def 목록(message):
@@ -343,12 +316,39 @@ async def 신청반려(message):
             await message.channel.send("{}님은 신청되지 않은 플레이어입니다.".format(player.mention))
 
 @client.command()
-async def 아레나1(message):
+async def 아레나가(message):
     pass
 
-@client.command()
-async def 아레나2(message):
-    pass
+@client.command()#TODO
+async def 종료(message):
+    global current_game
+
+    if message.channel.id!=channels['Arena']:
+        return
+    if current_game is None:
+        await message.channel.send("신청중인 아레나가 없습니다.")
+        return
+
+    closer=author(message)
+    if not is_moderator(closer):
+        await message.channel.send("운영진만 아레나를 종료할 수 있습니다.")
+        return
+    
+    logchannel=message.message.guild.get_channel(channels['활동로그'])
+
+    log="{} 아레나 참가자 목록\n".format(str(await current_game.get_time())[:10])
+    cnt=1
+    for user in (await current_game.get_players()):
+        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
+        if cnt==12:
+            break
+        cnt+=1
+
+    await current_game.close()
+    current_game=None
+
+    await logchannel.send(log)
+    await message.channel.send("아레나가 종료되었습니다.")
 
 ############################################################
 #자동 개최#TODO
@@ -369,7 +369,7 @@ async def auto_open():
     if daydelta==0:
         daydelta=0#(cur.hour>=12)*7
 
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 14, 24, 0)+datetime.timedelta(days=daydelta)#12, 0, 0
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 14, 28, 0)+datetime.timedelta(days=daydelta)#12, 0, 0
 
     while True:
         await asyncio.sleep((next_notify-current_time()).seconds)
