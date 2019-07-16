@@ -19,18 +19,20 @@ class weekday:
 
 WEEKDAY=weekday.화요일
 
+BETA=True
+BETA_TESTLAB=486550288686120961
+
+sheet_name='temp_arena'
+record_name='temp_record'
+gamble_sheet='Beta'
+prize=10000
+
 client=Bot(command_prefix=('~',))
 
 content=lambda ctx:ctx.message.content
 author=lambda ctx:ctx.message.author
 channel=lambda ctx:ctx.message.channel.id
 current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
-
-BETA=True
-BETA_TESTLAB=486550288686120961
-
-sheet_name='temp_arena'
-record_name='temp_record'
 
 channels={
     '내전신청':    469109911016570890,
@@ -65,7 +67,7 @@ addr='https://docs.google.com/spreadsheets/d/1iT9lW3ENsx0zFeFVKdvqXDF9OJeGMqVF9z
 scope=['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 grace=None
 
-async def get_worksheet(sheet_name=sheet_name):
+async def get_worksheet(sheet_name=sheet_name, addr=addr):
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
     auth=gspread.authorize(creds)
     if creds.access_token_expired:
@@ -80,8 +82,60 @@ async def get_worksheet(sheet_name=sheet_name):
         return -1
     return worksheet
 
+##################################################################
+#상금지급 관련
+
+async def get_row(ws,user=None,mention=None):
+    if user!=None:
+        mention=user.mention
+    if not (mention.startswith('<@') and mention.endswith('>')):
+        return -1
+    if mention[2]!='!':
+        mention=mention[:2]+'!'+mention[2:]
+    try: 
+        return ws.find(mention).row
+    except gspread.exceptions.CellNotFound:
+        ws.append_row([mention,'0'])
+        return ws.find(mention).row
+    except gspread.exceptions.APIError:
+        return -1
+
+async def get_money(ws,user=None,mention=None):
+    if user!=None:
+        row=await get_row(ws,user)
+    else:
+        row=await get_row(ws,mention=mention)
+    if row==-1:
+        return 0
+    return int(ws.cell(row,2).value)
+
+async def update_money(ws, money, user=None, mention=None, checkin=False):
+    if user!=None:
+        row=await get_row(ws,user)
+    else:
+        row=await get_row(ws,mention=mention)
+    if row==-1:
+        return False
+    ws.update_cell(row, 2, str(money))
+    if checkin:
+        ws.update_cell(row, 3, repr(current_time()))
+    return 1
+
+async def give_prize_money(team):
+    ws=get_worksheet(sheet_name=gamble_sheet,addr="https://docs.google.com/spreadsheets/d/1y1XnmgggAxVVJ3jJrVBocGTjpBR7b8_L9sf47GKBNok/edit#gid=0")
+    arenachannel=grace.get_channel(channels['Arena'])
+    for user in team:
+        money=await get_money(ws, user)
+        if await update_money(ws, money+prize, user):
+            continue
+        else:
+            await arenachannel.send("{}에게 상금 수동 지급이 필요합니다.".format(user.mention))
+
+
 async def get_all_players(ws):
     return [*map(lambda x:x[0],ws.get_all_values()[1:])]
+
+##################################################################
 
 def get_member_from_mention(mention):
     if not (mention.startswith('<@') and mention.endswith('>')):
@@ -369,6 +423,17 @@ async def 종료(message):
     team1=arena1.members
     arena2=grace.get_role(roles['아레나2'])
     team2=arena2.members
+
+    winner=content(message).split()[1]
+    if winner=='0':
+        pass
+    elif winner=='1':       
+        await give_prize_money(team1)
+    elif winner=='2':
+        await give_prize_money(team2)
+    else:
+        await message.channel.send("아레나 우승팀을 정확하게 입력해주세요.")
+        return
 
     for user in team1:
         await user.remove_roles(arena1)

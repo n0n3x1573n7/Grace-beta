@@ -559,6 +559,7 @@ async def 도움말(ctx):
         embed.add_field(name="!업데이트",value="내전 중 봇의 오류가 났다면 업데이트를 통해 내전 설정을 업데이트 할 수 있습니다.\n",inline=False)
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="운영진만 사용 가능한 명령어",value="\u200B",inline=False)
+        embed.add_field(name="!아레나 팀 @사용자1 @사용자2 ...\n",value="멘션한 사용자들에게 아레나 팀 권한을 부여합니다.\n팀은 0, 1, 2 중 하나로, 1, 2는 각각 아레나 1, 2팀 역할을 부여하며 0은 아레나 역할을 제거합니다.")
         embed.add_field(name="!임의신청 @사용자1 @사용자2 ...\n",value="멘션한 사용자들을 이 순서대로 신청한 것으로 처리합니다.\n",inline=False)
         embed.add_field(name="!신청반려 @사용자1 @사용자2 ...\n",value="멘션한 사용자들의 신청을 반려합니다.\n",inline=False)
         embed.add_field(name="!종료\n",value="아레나를 종료하고, 로그를 기록합니다.\n",inline=False)
