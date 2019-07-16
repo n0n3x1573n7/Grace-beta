@@ -562,7 +562,7 @@ async def 도움말(ctx):
         embed.add_field(name="!아레나 팀 @사용자1 @사용자2 ...\n",value="멘션한 사용자들에게 아레나 팀 권한을 부여합니다.\n팀은 0, 1, 2 중 하나로, 1, 2는 각각 아레나 1, 2팀 역할을 부여하며 0은 아레나 역할을 제거합니다.")
         embed.add_field(name="!임의신청 @사용자1 @사용자2 ...\n",value="멘션한 사용자들을 이 순서대로 신청한 것으로 처리합니다.\n",inline=False)
         embed.add_field(name="!신청반려 @사용자1 @사용자2 ...\n",value="멘션한 사용자들의 신청을 반려합니다.\n",inline=False)
-        embed.add_field(name="!종료\n",value="아레나를 종료하고, 로그를 기록합니다.\n",inline=False)
+        embed.add_field(name="!종료 우승팀\n",value="아레나를 종료하고, 우승팀에게 카지노 상금을 지급하고, 아레나 팀 역할을 모두 제거하고, 로그를 기록합니다.\n 우승팀은 0, 1, 2 중 하나로, 1, 2는 각각 아레나 1, 2팀, 0은 우승자 없음을 의미합니다.\n",inline=False)
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="모든 사람이 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="!확인\n",value="현재 아레나의 상태를 확인합니다.",inline=False)
