@@ -80,7 +80,7 @@ async def on_message(message):
         nickname = spreadsheet.col_values(3)
         
         try:
-            index = nickname.index(author)
+            index = nickname.index(author) + 1
             print(index)
         except gspread.exceptions.CellNotFound:
             return
