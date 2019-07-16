@@ -122,7 +122,7 @@ async def update_money(ws, money, user=None, mention=None, checkin=False):
     return 1
 
 async def give_prize_money(team):
-    ws=get_worksheet(sheet_name=gamble_sheet,addr="https://docs.google.com/spreadsheets/d/1y1XnmgggAxVVJ3jJrVBocGTjpBR7b8_L9sf47GKBNok/edit#gid=0")
+    ws=await get_worksheet(sheet_name=gamble_sheet,addr="https://docs.google.com/spreadsheets/d/1y1XnmgggAxVVJ3jJrVBocGTjpBR7b8_L9sf47GKBNok/edit#gid=0")
     arenachannel=grace.get_channel(channels['Arena'])
     for user in team:
         money=await get_money(ws, user)
