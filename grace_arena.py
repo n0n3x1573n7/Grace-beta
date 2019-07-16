@@ -369,7 +369,7 @@ async def auto_open():
     if daydelta==0:
         daydelta=0#(cur.hour>=12)*7
 
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 14, 28, 0)+datetime.timedelta(days=daydelta)#12, 0, 0
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 14, 31, 0)+datetime.timedelta(days=daydelta)#12, 0, 0
 
     while True:
         await asyncio.sleep((next_notify-current_time()).seconds)
