@@ -215,6 +215,8 @@ current_game=None
 @client.command()
 async def 업데이트(message):
     global current_game
+    if message.channel.id!=channels['내전신청']:
+        return
     if await Internal.check_integrity():
         current_game=Internal()
         msg="내전 설정이 업데이트되었습니다."

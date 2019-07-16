@@ -157,6 +157,8 @@ class Internal():
 @client.command()
 async def 업데이트(message):
     global current_game
+    if message.channel.id!=channels['Arena']:
+        return
     if await Internal.check_integrity():
         current_game=Internal()
         msg="아레나 설정이 업데이트되었습니다."
@@ -340,6 +342,14 @@ async def 신청반려(message):
         else:
             await message.channel.send("{}님은 신청되지 않은 플레이어입니다.".format(player.mention))
 
+@client.command()
+async def 아레나1(message):
+    pass
+
+@client.command()
+async def 아레나2(message):
+    pass
+
 ############################################################
 #자동 개최#TODO
 @client.event
@@ -357,19 +367,19 @@ async def auto_open():
     if daydelta<0:
         daydelta+=7
     if daydelta==0:
-        daydelta=(cur.hour>=12)*7
+        daydelta=(cur.hour>=24)*7
 
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 12, 0, 0)+datetime.timedelta(days=daydelta)
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 14, 20, 0)+datetime.timedelta(days=daydelta)
 
     while True:
         await asyncio.sleep((next_notify-current_time()).seconds)
         deadline=next_notify+datetime.timedelta(hours=8, minutes=1)
 
         ws=await get_spreadsheet()
-        arena=Internal.create(deadline)
+        current_game=Internal.create(deadline)
 
         msg='@everyone\n{} 아레나 신청이 열렸습니다.'.format(str(await current_game.get_time())[:10])
-        await message.channel.send(msg)
+        await arenachannel.send(msg)
 
         next_notify=next_notify+datetime.timedelta(days=7)
 
