@@ -316,7 +316,7 @@ async def 신청반려(message):
             await message.channel.send("{}님은 신청되지 않은 플레이어입니다.".format(player.mention))
 
 @client.command()
-async def 아레나가(message):
+async def 아레나(message):
     pass
 
 @client.command()#TODO
