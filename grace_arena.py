@@ -46,6 +46,8 @@ channels={
 roles={
     '외부인':      510731224654938112,
     '빠대':        527842187862605834,
+    '아레나1':     472362510725414912,
+    '아레나2':     472362739222970368,
 }
 
 if BETA:
@@ -317,7 +319,34 @@ async def 신청반려(message):
 
 @client.command()
 async def 아레나(message):
-    pass
+    if message.channel.id!=channels['Arena']:
+        return
+    if current_game is None:
+        await message.channel.send("신청중인 아레나가 없습니다.")
+        return
+
+    closer=author(message)
+    if not is_moderator(closer):
+        await message.channel.send("운영진만 아레나 역할을 부여할 수 있습니다.")
+        return
+
+    arena1=grace.get_role(roles['아레나1'])
+    arena2=grace.get_role(roles['아레나2'])
+    players=message.message.mentions
+
+    team=content(message).split()[1]
+    if team=='0':
+        for player in players:
+            await player.remove_roles(arena1, arena2, atomic=True)
+        await message.channel.send("역할 제거가 완료되었습니다.")
+    if team=='1':
+        for player in players:
+            await players.add_roles(arena1, atomic=True)
+        await message.channel.send("역할 부여가 완료되었습니다.")
+    if team=='2':
+        for player in players:
+            await players.add_roles(arena2, atomic=True)
+        await message.channel.send("역할 부여가 완료되었습니다.")
 
 @client.command()#TODO
 async def 종료(message):
@@ -335,6 +364,16 @@ async def 종료(message):
         return
     
     logchannel=message.message.guild.get_channel(channels['활동로그'])
+
+    arena1=grace.get_role(roles['아레나1'])
+    team1=arena1.members
+    arena2=grace.get_role(roles['아레나2'])
+    team2=arena2.members
+
+    for user in team1:
+        await user.remove_roles(arena1)
+    for user in team2:
+        await user.remove_roles(arena2)
 
     log="{} 아레나 참가자 목록\n".format(str(await current_game.get_time())[:10])
     cnt=1
@@ -367,9 +406,9 @@ async def auto_open():
     if daydelta<0:
         daydelta+=7
     if daydelta==0:
-        daydelta=0#(cur.hour>=12)*7
+        daydelta=(cur.hour>=12)*7
 
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 14, 31, 0)+datetime.timedelta(days=daydelta)#12, 0, 0
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 12, 0, 0)+datetime.timedelta(days=daydelta)#12, 0, 0
 
     while True:
         await asyncio.sleep((next_notify-current_time()).seconds)
