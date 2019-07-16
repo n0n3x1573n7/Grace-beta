@@ -369,13 +369,13 @@ async def auto_open():
     if daydelta==0:
         daydelta=(cur.hour>=24)*7
 
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 14, 20, 0)+datetime.timedelta(days=daydelta)
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 14, 22, 0)+datetime.timedelta(days=daydelta)
 
     while True:
         await asyncio.sleep((next_notify-current_time()).seconds)
         deadline=next_notify+datetime.timedelta(hours=8, minutes=1)
 
-        ws=await get_spreadsheet()
+        ws=await get_worksheet()
         current_game=Internal.create(deadline)
 
         msg='@everyone\n{} 아레나 신청이 열렸습니다.'.format(str(await current_game.get_time())[:10])
