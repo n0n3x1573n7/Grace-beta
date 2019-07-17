@@ -119,9 +119,10 @@ async def on_message(message):
         embed.add_field(name="직책", value=roleimage + role, inline=True)
         if arena is not "X":
             embed.add_field(name="Grace Arena", value=":trophy: 제 " + arena + "회 우승", inline=True)
-        if league_first is not "X" or league_second is not "X":
-            embed.add_field(name="Grace League", value=":first_place: 제 " + league_first + "회 우승, :second_place:제 " +
-                                                   league_second + "회 준우승", inline=True)
+        if league_first is not "X":
+            embed.add_field(name="Grace League", value=":first_place: 제 " + league_first + "회 우승", inline=True)
+        if league_second is not "X":
+            embed.add_field(name="Grace League", value=":second_place:제 " + league_second + "회 준우승", inline=True)
 
         await channel.send(embed=embed)
 
