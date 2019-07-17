@@ -337,7 +337,7 @@ async def 개최자변경(message):
 
     new_opener=message.message.mentions[0]
     await current_game.set_opener(new_opener)
-    msg="{} 내전 개최자가 {}로 변경되었습니다.".format(str(await current_game.get_time())[:-3], (await current_game.get_opener()).mention)
+    msg="@everyone\n{} 내전 개최자가 {}로 변경되었습니다.".format(str(await current_game.get_time())[:-3], (await current_game.get_opener()).mention)
     await message.channel.send(msg)
 
 @client.command()
