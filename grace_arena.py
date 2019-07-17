@@ -476,7 +476,8 @@ async def auto_open():
     next_notify=datetime.datetime(cur.year, cur.month, cur.day, 12, 0, 0)+datetime.timedelta(days=daydelta)#12, 0, 0
 
     while True:
-        await asyncio.sleep((next_notify-current_time()).seconds)
+        delta=(next_notify-current_time())
+        await asyncio.sleep(delta.days*24*60*60+delta.seconds)
         deadline=next_notify+datetime.timedelta(hours=8, minutes=1)
 
         ws=await get_worksheet()
