@@ -117,7 +117,10 @@ async def on_message(message):
         embed.set_thumbnail(url=thumbnaillink)
         embed.set_author(name=battletag)
         embed.add_field(name="직책", value=roleimage + role, inline=True)
-        embed.add_field(name="Grace Arena", value=":trophy: 제 " + arena + "회 우승", inline=True)
+        if arena is "X":
+            pass
+        else:
+            embed.add_field(name="Grace Arena", value=":trophy: 제 " + arena + "회 우승", inline=True)
         embed.add_field(name="Grace League", value=":first_place: 제 " + league_first + "회 우승, :second_place:제 " +
                                                    league_second + "회 준우승", inline=True)
 
