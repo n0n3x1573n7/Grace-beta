@@ -328,7 +328,7 @@ async def 임의신청(message):
         return
 
     opener=author(message)
-    if opener!=await current_game.get_opener() and (not is_moderator(opener)):
+    if opener!=(not is_moderator(opener)):
         await message.channel.send("운영진만 임의신청이 가능합니다.")
         return
 
@@ -359,7 +359,7 @@ async def 신청반려(message):
         return
 
     opener=author(message)
-    if opener!=await current_game.get_opener() and (not is_moderator(opener)):
+    if opener!=(not is_moderator(opener)):
         await message.channel.send("운영진만 신청반려가 가능합니다.")
         return
 
