@@ -484,6 +484,42 @@ async def 종료(message):
     await logchannel.send(log)
     await message.channel.send("아레나가 종료되었습니다.")
 
+@client.command()
+async def 개최(message):
+    global current_game
+
+    if message.channel.id!=channels['Arena']:
+        return
+    if current_game is not None:
+        await message.channel.send("이미 {}에 내전이 예정되어 있습니다.".format(str(await current_game.get_time())[:-3]))
+        return
+
+    current=current_time()
+    time=content(message).split()
+    if len(time)==1:
+        hour=21
+        minute=0
+        hour24=True
+    else:
+        time=time[1].split(':')
+        hour=int(time[0])
+        minute=int(time[1])
+        hour24=False
+        if hour>12:
+            hour24=True
+    time=datetime.datetime(year=current.year, month=current.month, day=current.day, hour=0, minute=0)\
+         +datetime.timedelta(hours=hour, minutes=minute)
+
+    while time<current_time():
+        if hour24:
+            time+=datetime.timedelta(hours=24)
+        else:
+            time+=datetime.timedelta(hours=12)
+    current_game=await Internal.create(time)
+
+    msg="@ everyone\n{} 아레나 신청이 열렸습니다.".format(str(await current_game.get_time())[:-3])
+    await message.channel.send(msg)
+
 ############################################################
 #자동 개최#TODO
 @client.event
