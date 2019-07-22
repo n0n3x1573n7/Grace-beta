@@ -131,6 +131,36 @@ async def give_prize_money(team):
         else:
             await arenachannel.send("{}에게 상금 수동 지급이 필요합니다.".format(user.mention))
 
+async def update_record(ws, record, user=None, mention=None, checkin=False):
+    if user!=None:
+        row=await get_row(ws,user)
+    else:
+        row=await get_row(ws,mention=mention)
+    if row==-1:
+        return False
+    ws.update_cell(row, 9, record)
+    return 1
+
+async def get_record(ws,user=None,mention=None):
+    if user!=None:
+        row=await get_row(ws,user)
+    else:
+        row=await get_row(ws,mention=mention)
+    if row==-1:
+        return 0
+    return ws.cell(row,9).value
+
+async def update_arena_record(team):
+    ws=await get_worksheet(sheet_name=gamble_sheet,addr="https://docs.google.com/spreadsheets/d/1XeS_UOZOEqGzHVuUyWbSYiBlV1HMUHFxZ-zEj0xQ4Jc/edit#gid=1799021615")
+    arenachannel=grace.get_channel(channels['Arena'])
+     for user in team:
+        record=await get_record(ws, user)
+        if await update_record(ws, record, user):
+            continue
+        else:
+            await arenachannel.send("{} 우승기록 수동 기입이 필요합니다".format(user.mention))
+            
+
 
 async def get_all_players(ws):
     return [*map(lambda x:x[0],ws.get_all_values()[1:])]
