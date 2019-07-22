@@ -458,9 +458,9 @@ async def 종료(message):
     if winner=='0':
         pass
     elif winner=='1':       
-        await give_prize_money(team1)
+        await update_arena_record(team1)
     elif winner=='2':
-        await give_prize_money(team2)
+        await update_arena_record(team2)
     else:
         await message.channel.send("아레나 우승팀을 정확하게 입력해주세요.")
         return
