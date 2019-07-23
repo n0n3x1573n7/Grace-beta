@@ -156,7 +156,7 @@ async def get_record(ws,user=None,mention=None):
     return ws.cell(row,9).value
 
 async def update_arena_record(team):
-    print('func :: update_arena_record)
+    print("func :: update_arena_record")
     ws=await get_worksheet(sheet_name=win_record,addr="https://docs.google.com/spreadsheets/d/1XeS_UOZOEqGzHVuUyWbSYiBlV1HMUHFxZ-zEj0xQ4Jc/edit#gid=1799021615")
     arenachannel=grace.get_channel(channels['Arena'])
     for user in team:
