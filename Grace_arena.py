@@ -142,7 +142,11 @@ async def update_record(ws, record, user=None, mention=None):
         return False
     print(row)
     print(record)
-    ws.update_cell(row, 9, record+",")
+    if(record == "X"):
+        ws.update_cell(row, 9, "")
+        ws.update_cell(row, 9, "19")
+    else:
+        ws.update_cell(row, 9, record+",")
     return 1
 
 async def get_record(ws,user=None,mention=None):
