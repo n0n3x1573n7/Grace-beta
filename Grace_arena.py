@@ -151,7 +151,6 @@ async def update_record(ws, record, user=None, mention=None):
     return 1
 
 async def get_record(ws,user=None,mention=None):
-    print("func :: get_record")
     if user!=None:
         row=await get_row(ws,user)
     else:
@@ -160,11 +159,9 @@ async def get_record(ws,user=None,mention=None):
         print(row)
     if row==-1:
         return 0
-    print(ws.cell(row,9).value)
     return ws.cell(row,9).value
 
 async def update_arena_record(team):
-    print("func :: update_arena_record")
     ws=await get_worksheet(sheet_name=win_record,addr="https://docs.google.com/spreadsheets/d/1XeS_UOZOEqGzHVuUyWbSYiBlV1HMUHFxZ-zEj0xQ4Jc/edit#gid=1799021615")
     arenachannel=grace.get_channel(channels['Arena'])
     for user in team:
