@@ -163,7 +163,6 @@ async def update_record(ws, record, user=None, mention=None):
         ws.update_cell(row, 9, recent)
     else:
         ws.update_cell(row, 9, record+","+str(recent))
-    ws.update_cell(1, 15, recent+1)
     return 1
 
 async def get_record(ws,user=None,mention=None):
@@ -187,6 +186,7 @@ async def update_arena_record(team):
             continue
         else:
             await arenachannel.send("{} 우승기록 수동 기입이 필요합니다".format(user.mention))
+        ws.update_cell(1, 15, recent+1)
             
 
 
