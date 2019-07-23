@@ -132,13 +132,17 @@ async def give_prize_money(team):
         else:
             await arenachannel.send("{}에게 상금 수동 지급이 필요합니다.".format(user.mention))
 
-async def update_record(ws, record, user=None, mention=None, checkin=False):
+async def update_record(ws, record, user=None, mention=None):
+    print("func :: update_record")
     if user!=None:
         row=await get_row(ws,user)
+        
     else:
         row=await get_row(ws,mention=mention)
     if row==-1:
         return False
+    print(row)
+    print(record)
     ws.update_cell(row, 9, record)
     return 1
 
