@@ -136,14 +136,13 @@ async def update_record(ws, record, user=None, mention=None):
     print("func :: update_record")
     if user!=None:
         row=await get_row(ws,user)
-        
     else:
         row=await get_row(ws,mention=mention)
     if row==-1:
         return False
     print(row)
     print(record)
-    ws.update_cell(row, 9, record)
+    ws.update_cell(row, 9, record+",")
     return 1
 
 async def get_record(ws,user=None,mention=None):
