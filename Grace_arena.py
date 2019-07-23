@@ -101,22 +101,6 @@ async def get_row(ws,user=None,mention=None):
     except gspread.exceptions.APIError:
         return -1
     
-async def get_row_by_nick(ws,user=None,mention=None):
-    nick = user.nick.split('/')[0]
-    if user!=None:
-        mention=user.mention
-    if not (mention.startswith('<@') and mention.endswith('>')):
-        return -1
-    if mention[2]!='!':
-        mention=mention[:2]+'!'+mention[2:]
-    try: 
-        return ws.find(nick).row
-    except gspread.exceptions.CellNotFound:
-        ws.append_row([nick,'1'])
-        return ws.find(mention).row
-    except gspread.exceptions.APIError:
-        return -1
-
 async def get_money(ws,user=None,mention=None):
     if user!=None:
         row=await get_row(ws,user)
@@ -147,7 +131,25 @@ async def give_prize_money(team):
             continue
         else:
             await arenachannel.send("{}에게 상금 수동 지급이 필요합니다.".format(user.mention))
-
+            
+##################################################################
+#우승기록 관련    
+async def get_row_by_nick(ws,user=None,mention=None):
+    nick = user.nick.split('/')[0]
+    if user!=None:
+        mention=user.mention
+    if not (mention.startswith('<@') and mention.endswith('>')):
+        return -1
+    if mention[2]!='!':
+        mention=mention[:2]+'!'+mention[2:]
+    try: 
+        return ws.find(nick).row
+    except gspread.exceptions.CellNotFound:
+        ws.append_row([nick,'1'])
+        return ws.find(mention).row
+    except gspread.exceptions.APIError:
+        return -1
+    
 async def update_record(ws, record, user=None, mention=None):
     recent = int(ws.cell(1,15).value)
     
@@ -189,10 +191,7 @@ async def update_arena_record(team):
             await arenachannel.send("{} 우승기록 수동 기입이 필요합니다".format(user.mention))
     ws.update_cell(1, 15, recent+1)
             
-            
-                 
-
-
+     
 async def get_all_players(ws):
     return [*map(lambda x:x[0],ws.get_all_values()[1:])]
 
