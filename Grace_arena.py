@@ -184,10 +184,10 @@ async def update_arena_record(team):
         print(user.nick.split('/')[0])
         record=await get_record(ws, user)
         if await update_record(ws, record, user):
-            ws.update_cell(1, 15, recent+1)
             continue
         else:
             await arenachannel.send("{} 우승기록 수동 기입이 필요합니다".format(user.mention))
+    ws.update_cell(1, 15, recent+1)
             
             
                  
