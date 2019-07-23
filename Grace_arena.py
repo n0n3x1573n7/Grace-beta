@@ -134,7 +134,7 @@ async def give_prize_money(team):
 
 async def update_record(ws, record, user=None, mention=None):
     print("func :: update_record")
-    recent = ws.cell(1,15).value
+    recent = int(ws.cell(1,15).value)
     print(recent)
     if user!=None:
         row=await get_row(ws,user)
@@ -148,7 +148,7 @@ async def update_record(ws, record, user=None, mention=None):
         ws.update_cell(row, 9, "")
         ws.update_cell(row, 9, recent)
     else:
-        ws.update_cell(row, 9, record+","+recent)
+        ws.update_cell(row, 9, record+","+str(recent))
     recent = recent + 1
     return 1
 
