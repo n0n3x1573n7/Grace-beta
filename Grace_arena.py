@@ -51,7 +51,7 @@ roles={
     '빠대':        527842187862605834,
     '아레나1':     472362510725414912,
     '아레나2':     472362739222970368,
-    '팀장':        603400196839178260,
+    '아레나팀장':  603400196839178260,
 }
 
 if BETA:
@@ -452,7 +452,7 @@ async def 아레나(message):
 
     arena1=grace.get_role(roles['아레나1'])
     arena2=grace.get_role(roles['아레나2'])
-    leader=grace.get_role(roles['팀장'])
+    leader=grace.get_role(roles['아레나팀장'])
     players=message.message.mentions
 
     team=content(message).split()[1]
@@ -492,7 +492,7 @@ async def 종료(message):
     team1=arena1.members
     arena2=grace.get_role(roles['아레나2'])
     team2=arena2.members
-    leader=grace.get_role(roles['팀장'])
+    leader=grace.get_role(roles['아레나팀장'])
 
     winner=content(message).split()[1]
     if winner=='0':
@@ -543,7 +543,7 @@ async def 안내(message):
     team1=[*map(lambda x:x.mention,arena1.members)]
     arena2=grace.get_role(roles['아레나2'])
     team2=[*map(lambda x:x.mention,arena2.members)]
-    leader=grace.get_role(roles['팀장'])
+    leader=grace.get_role(roles['아레나팀장'])
     leaders=[*map(lambda x:x.mention,leader.members)]
 
     if leaders[0] in team2:
