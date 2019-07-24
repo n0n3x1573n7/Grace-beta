@@ -303,7 +303,7 @@ async def 확인(message):
         await message.channel.send("아레나가 예정되어 있지 않습니다.")
 
     else:
-        msg="{} 아레나가".format(str(await current_game.get_time())[:10])
+        msg="{} 아레나가 ".format(str(await current_game.get_time())[:10])
         if current_time()<(await current_game.get_time()):
             msg+="신청중입니다."
         elif current_time()<(await current_game.get_time())+datetime.timedelta(hours=1):
@@ -512,7 +512,7 @@ async def 종료(message):
 
     log="{} 아레나 참가자 목록\n".format(str(await current_game.get_time())[:10])
     cnt=1
-    for user in (await current_game.get_players()):
+    for user in team1+team2:
         log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
         if cnt==12:
             break
@@ -568,6 +568,8 @@ async def 안내(message):
 
 각 팀에서는 팀명을 정하여 경기 시작 전까지 Arena 개최자({})에게 제출하여 주시기 바랍니다.
 '''.format(await get_arena_number(), team1str, team2str, opener.mention)
+
+    await message.channel.send(text)
 
 @client.command()
 async def 개최(message):
