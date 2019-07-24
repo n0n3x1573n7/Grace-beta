@@ -157,7 +157,7 @@ async def get_arena_number(ws=None):
     return int(ws.cell(1,15).value)
     
 async def update_record(ws, record, user=None, mention=None):
-    recent = get_arena_number(ws)
+    recent = await get_arena_number(ws)
     
     if user!=None:
         row=await get_row_by_nick(ws,user)
@@ -187,7 +187,7 @@ async def get_record(ws,user=None,mention=None):
 async def update_arena_record(team):
     ws=await get_worksheet(sheet_name=win_record,addr="https://docs.google.com/spreadsheets/d/1XeS_UOZOEqGzHVuUyWbSYiBlV1HMUHFxZ-zEj0xQ4Jc/edit#gid=1799021615")
     arenachannel=grace.get_channel(channels['Arena'])
-    recent = get_arena_number(ws)
+    recent = await get_arena_number(ws)
     for user in team:
         print(user.nick.split('/')[0])
         record=await get_record(ws, user)
@@ -602,7 +602,7 @@ async def 개최(message):
             time+=datetime.timedelta(hours=12)
     current_game=await Internal.create(time)
 
-    msg="@everyone\n{} 제 {}회 그레이스 아레나 신청이 열렸습니다.".format(str(await current_game.get_time())[:-3], get_arena_number())
+    msg="@everyone\n{} 제 {}회 그레이스 아레나 신청이 열렸습니다.".format(str(await current_game.get_time())[:-3], await get_arena_number())
     await message.channel.send(msg)
 
 ############################################################
@@ -634,7 +634,7 @@ async def auto_open():
         ws=await get_worksheet()
         current_game=await Internal.create(deadline)
 
-        msg='@everyone\n{} 제 {} 회 그레이스 아레나 신청이 열렸습니다.'.format(str(await current_game.get_time())[:10], get_arena_number())
+        msg='@everyone\n{} 제 {} 회 그레이스 아레나 신청이 열렸습니다.'.format(str(await current_game.get_time())[:10], await get_arena_number())
         await arenachannel.send(msg)
 
         next_notify=next_notify+datetime.timedelta(days=7)
