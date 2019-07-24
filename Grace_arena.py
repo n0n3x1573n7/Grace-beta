@@ -51,6 +51,7 @@ roles={
     '빠대':        527842187862605834,
     '아레나1':     472362510725414912,
     '아레나2':     472362739222970368,
+    '팀장':        603400196839178260,
 }
 
 if BETA:
@@ -149,9 +150,14 @@ async def get_row_by_nick(ws,user=None,mention=None):
         return ws.find(mention).row
     except gspread.exceptions.APIError:
         return -1
+
+async def get_arena_number(ws=None):
+    if ws==None:
+        ws=await get_worksheet(sheet_name=win_record,addr="https://docs.google.com/spreadsheets/d/1XeS_UOZOEqGzHVuUyWbSYiBlV1HMUHFxZ-zEj0xQ4Jc/edit#gid=1799021615")
+    return int(ws.cell(1,15).value)
     
 async def update_record(ws, record, user=None, mention=None):
-    recent = int(ws.cell(1,15).value)
+    recent = get_arena_number(ws)
     
     if user!=None:
         row=await get_row_by_nick(ws,user)
@@ -181,7 +187,7 @@ async def get_record(ws,user=None,mention=None):
 async def update_arena_record(team):
     ws=await get_worksheet(sheet_name=win_record,addr="https://docs.google.com/spreadsheets/d/1XeS_UOZOEqGzHVuUyWbSYiBlV1HMUHFxZ-zEj0xQ4Jc/edit#gid=1799021615")
     arenachannel=grace.get_channel(channels['Arena'])
-    recent = int(ws.cell(1,15).value)
+    recent = get_arena_number(ws)
     for user in team:
         print(user.nick.split('/')[0])
         record=await get_record(ws, user)
@@ -446,18 +452,21 @@ async def 아레나(message):
 
     arena1=grace.get_role(roles['아레나1'])
     arena2=grace.get_role(roles['아레나2'])
+    leader=grace.get_role(roles['팀장'])
     players=message.message.mentions
 
     team=content(message).split()[1]
     if team=='0':
         for player in players:
-            await player.remove_roles(arena1, arena2, atomic=True)
+            await player.remove_roles(arena1, arena2, leader, atomic=True)
         await message.channel.send("역할 제거가 완료되었습니다.")
     if team=='1':
+        await players[0].add_roles(leader, atomic=True)
         for player in players:
             await player.add_roles(arena1, atomic=True)
         await message.channel.send("역할 부여가 완료되었습니다.")
     if team=='2':
+        await players[0].add_roles(leader, atomic=True)
         for player in players:
             await player.add_roles(arena2, atomic=True)
         await message.channel.send("역할 부여가 완료되었습니다.")
@@ -483,6 +492,7 @@ async def 종료(message):
     team1=arena1.members
     arena2=grace.get_role(roles['아레나2'])
     team2=arena2.members
+    leader=grace.get_role(roles['팀장'])
 
     winner=content(message).split()[1]
     if winner=='0':
@@ -496,9 +506,9 @@ async def 종료(message):
         return
 
     for user in team1:
-        await user.remove_roles(arena1)
+        await user.remove_roles(arena1, leader, atomic=True)
     for user in team2:
-        await user.remove_roles(arena2)
+        await user.remove_roles(arena2, leader, atomic=True)
 
     log="{} 아레나 참가자 목록\n".format(str(await current_game.get_time())[:10])
     cnt=1
@@ -515,13 +525,58 @@ async def 종료(message):
     await message.channel.send("아레나가 종료되었습니다.")
 
 @client.command()
+async def 안내(message):
+    global current_game
+
+    if message.channel.id!=channels['Arena']:
+        return
+    if current_game is None:
+        await message.channel.send("아레나가 예정되어있지 않습니다.")
+        return 
+
+    opener=author(message)
+    if not is_moderator(opener):
+        await message.channel.send("운영진만 아레나를 개최할 수 있습니다.")
+        return
+
+    arena1=grace.get_role(roles['아레나1'])
+    team1=[*map(lambda x:x.mention,arena1.members)]
+    arena2=grace.get_role(roles['아레나2'])
+    team2=[*map(lambda x:x.mention,arena2.members)]
+    leader=grace.get_role(roles['팀장'])
+    leaders=[*map(lambda x:x.mention,leader.members)]
+
+    if leaders[0] in team2:
+        leaders[0],leaders[1]=leaders[1],leaders[0]
+
+    team1.remove(leaders[0])
+    team2.remove(leaders[1])
+
+    team1str=leaders[0]+'\n'+'\n'.join(team1)
+    team2str=leaders[1]+'\n'+'\n'.join(team2)
+
+    text='''@everyone
+제{}회 Grace Arena 팀입니다.
+
+1팀
+팀장: {}
+
+2팀
+팀장: {} 
+
+각 팀은 클랜 내 전용 팀 채널 ( <#472367189148696577> <#474972380041707521> )이용 가능합니다.
+
+각 팀에서는 팀명을 정하여 경기 시작 전까지 Arena 개최자({})에게 제출하여 주시기 바랍니다.
+'''.format(await get_arena_number(), team1str, team2str, opener.mention)
+
+@client.command()
 async def 개최(message):
     global current_game
 
     if message.channel.id!=channels['Arena']:
         return
     if current_game is not None:
-        await message.channel.send("이미 {}에 내전이 예정되어 있습니다.".format(str(await current_game.get_time())[:-3]))
+        await message.channel.send("이미 {}에 아레나가 예정되어 있습니다.".format(str(await current_game.get_time())[:-3]))
         return
 
     current=current_time()
@@ -547,7 +602,7 @@ async def 개최(message):
             time+=datetime.timedelta(hours=12)
     current_game=await Internal.create(time)
 
-    msg="@ everyone\n{} 아레나 신청이 열렸습니다.".format(str(await current_game.get_time())[:-3])
+    msg="@everyone\n{} 제 {}회 그레이스 아레나 신청이 열렸습니다.".format(str(await current_game.get_time())[:-3], get_arena_number())
     await message.channel.send(msg)
 
 ############################################################
@@ -579,7 +634,7 @@ async def auto_open():
         ws=await get_worksheet()
         current_game=await Internal.create(deadline)
 
-        msg='@everyone\n{} 아레나 신청이 열렸습니다.'.format(str(await current_game.get_time())[:10])
+        msg='@everyone\n{} 제 {} 회 그레이스 아레나 신청이 열렸습니다.'.format(str(await current_game.get_time())[:10], get_arena_number())
         await arenachannel.send(msg)
 
         next_notify=next_notify+datetime.timedelta(days=7)
