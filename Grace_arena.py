@@ -453,7 +453,7 @@ async def 아레나(message):
     arena1=grace.get_role(roles['아레나1'])
     arena2=grace.get_role(roles['아레나2'])
     leader=grace.get_role(roles['아레나팀장'])
-    players=message.message.mentions
+    players=[*map(get_member_from_mention,content(message).split()[1:])]
 
     team=content(message).split()[1]
     if team=='0':
