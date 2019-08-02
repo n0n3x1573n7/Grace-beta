@@ -547,6 +547,7 @@ async def 안내(message):
     team2=[*map(lambda x:x.mention,arena2.members)]
     leader=grace.get_role(roles['아레나팀장'])
     leaders=[*map(lambda x:x.mention,leader.members)]
+    print(leaders)
 
     if leaders[0] in team2:
         leaders[0],leaders[1]=leaders[1],leaders[0]
