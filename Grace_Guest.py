@@ -47,6 +47,11 @@ async def 손님(message):
 
     enter=author(message)
     reference=' '.join(content(message).split()[1:])
+    await message.message.delete()
+
+    if not has_role(enter, '외부인'):
+        return
+
     if not reference:
         return
 
@@ -58,8 +63,6 @@ async def 손님(message):
 
     await enter.add_roles(guest, atomic=True)
     await enter.remove_roles(outsider, atomic=True)
-
-    await message.message.delete()
 
 @client.event
 async def on_ready():
