@@ -55,10 +55,11 @@ async def 손님(message):
     logchannel=grace.get_channel(channels['출입로그'])
     
     await logchannel.send("{}님이 {}님의 손님으로 들어오셨습니다.".format(enter.mention, reference))
-    await message.delete()
 
     await enter.add_roles(guest, atomic=True)
     await enter.remove_roles(outsider, atomic=True)
+
+    await message.delete()
 
 @client.event
 async def on_ready():
