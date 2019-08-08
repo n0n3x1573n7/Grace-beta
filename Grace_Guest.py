@@ -59,7 +59,7 @@ async def 손님(message):
     await enter.add_roles(guest, atomic=True)
     await enter.remove_roles(outsider, atomic=True)
 
-    await message.delete()
+    await message.message.delete()
 
 @client.event
 async def on_ready():
