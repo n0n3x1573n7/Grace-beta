@@ -44,9 +44,11 @@ def has_role(member, role):
 async def 손님(message):
     if message.channel.id!=channels['가입상담']:
         return
-    
+
     enter=author(message)
     reference=' '.join(content(message).split()[1:])
+    if not reference:
+        return
 
     outsider=grace.get_role(roles['외부인'])
     guest=grace.get_role(roles['손님'])
@@ -63,7 +65,7 @@ async def on_ready():
     global grace
     await client.wait_until_ready()
     grace=client.get_guild(359714850865414144)
-    print("login: Grace Arena")
+    print("login: Grace Guest")
     print(client.user.name)
     print(client.user.id)
     print("---------------")
