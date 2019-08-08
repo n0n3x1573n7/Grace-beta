@@ -52,8 +52,8 @@ async def 손님(message):
 
     outsider=grace.get_role(roles['외부인'])
     guest=grace.get_role(roles['손님'])
-
     logchannel=grace.get_channel(channels['출입로그'])
+    
     await logchannel.send("{}님이 {}님의 손님으로 들어오셨습니다.".format(enter.mention, reference))
     await message.delete()
 
