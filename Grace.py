@@ -41,7 +41,7 @@ async def on_message(message):
     content = message.content
     channel = message.channel
 
-    if channel.id != 486550288686120961: return
+    if not ((BETA and channel.id == 486550288686120961) or (not BETA and channel.id == 419397742025113612)): return
 
     print('{} / {}: {}'.format(channel, author, content))
     
