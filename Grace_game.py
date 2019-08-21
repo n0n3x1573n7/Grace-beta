@@ -158,7 +158,13 @@ class Internal():
     async def get_players(self):
         ws=await get_worksheet()
         val=await get_all_players(ws)
-        return [*map(get_member_from_mention,val)]
+        users=[]
+        for user in *map(get_member_from_mention,val):
+            if user==-1:
+                pass
+            else:
+                users.append(user)
+        return users
 
     async def add_player(self,new_player):
         ws=await get_worksheet()

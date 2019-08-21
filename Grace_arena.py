@@ -507,11 +507,6 @@ async def 종료(message):
         await message.channel.send("아레나 우승팀을 정확하게 입력해주세요.")
         return
 
-    for user in team1:
-        await user.remove_roles(arena1, leader, atomic=True)
-    for user in team2:
-        await user.remove_roles(arena2, leader, atomic=True)
-
     log="{} 아레나 참가자 목록\n".format(str(await current_game.get_time())[:10])
     cnt=1
     for user in team1+team2:
@@ -519,6 +514,11 @@ async def 종료(message):
         if cnt==12:
             break
         cnt+=1
+
+    for user in team1:
+        await user.remove_roles(arena1, leader, atomic=True)
+    for user in team2:
+        await user.remove_roles(arena2, leader, atomic=True)
 
     await current_game.close()
     current_game=None
