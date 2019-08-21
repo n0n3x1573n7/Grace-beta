@@ -159,7 +159,7 @@ class Internal():
         ws=await get_worksheet()
         val=await get_all_players(ws)
         users=[]
-        for user in *map(get_member_from_mention,val):
+        for user in map(get_member_from_mention,val):
             if user==-1:
                 pass
             else:

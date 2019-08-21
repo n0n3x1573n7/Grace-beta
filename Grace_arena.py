@@ -235,9 +235,15 @@ class Internal():
             return False
 
     async def get_players(self):
-        ws=await get_worksheet(sheet_name)
+        ws=await get_worksheet()
         val=await get_all_players(ws)
-        return [*map(get_member_from_mention,val)]
+        users=[]
+        for user in map(get_member_from_mention,val):
+            if user==-1:
+                pass
+            else:
+                users.append(user)
+        return users
 
     async def set_time(self, time):
         ws=await get_worksheet()
