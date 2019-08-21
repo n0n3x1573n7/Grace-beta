@@ -275,16 +275,12 @@ class Internal():
 
     async def close(self):
         ws=await get_worksheet(sheet_name)
-        rows=ws.row_count
-        for _ in range(2,rows+1):
-            ws.delete_row(2)
-        ws.update_cell(1,1,'')
+        ws.clear()
+        ws.resize(rows=1, cols=1)
 
         ws=await get_worksheet(record_name)
-        rows=ws.row_count
-        for _ in range(2,rows+1):
-            ws.delete_row(2)
-        ws.update_cell(1,1,'')
+        ws.clear()
+        ws.resize(rows=1, cols=1)
 
 @client.command()
 async def 업데이트(message):
