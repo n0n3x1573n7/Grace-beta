@@ -539,6 +539,7 @@ async def 안내(message):
         return 
 
     try:
+        plr=message.message.content.split()[1]
         opener=client.get_user(int(plr[3:-1]))
         print(opener)
         if opener==None:
