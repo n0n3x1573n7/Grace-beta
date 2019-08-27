@@ -538,7 +538,14 @@ async def 안내(message):
         await message.channel.send("아레나가 예정되어있지 않습니다.")
         return 
 
-    opener=author(message)
+    try:
+        opener=client.get_user(int(plr[3:-1]))
+        print(opener)
+        if opener==None:
+            raise Exception
+    except:
+        opener=author(message)
+    
     if not is_moderator(opener):
         await message.channel.send("운영진만 아레나를 개최할 수 있습니다.")
         return
