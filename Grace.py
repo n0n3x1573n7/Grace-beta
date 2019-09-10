@@ -15,7 +15,7 @@ scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/au
 url='https://docs.google.com/spreadsheets/d/1gfSsgM_0BVqnZ02ZwRsDniU-qkRF0Wo-B7rJhYoYXqc/edit?usp=drive_web&ouid=108946956826520256706'
 
 @client.event
-async def on_ready(ws_name):
+async def on_ready():
     global grace
     await client.wait_until_ready()
     grace=client.get_guild(359714850865414144)
