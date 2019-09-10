@@ -63,6 +63,9 @@ async def on_message(message):
         author = message.content
         author = author.split(">>")
         author = author[1]
+
+        if author=='':
+            return
         
         spreadsheet=await get_spreadsheet('responses')
         roles=spreadsheet.col_values(6)
@@ -125,8 +128,6 @@ async def on_message(message):
         elif link is not None:
             embed = discord.Embed(title="바로가기", url=link, description=description, color=0x5c0bb7)
 
-        embed.set_image(url=imagelink)
-        embed.set_thumbnail(url=thumbnaillink)
         embed.set_author(name=battletag)
         embed.add_field(name="직책", value=roleimage + role, inline=True)
         if arena is not "X":
@@ -135,6 +136,10 @@ async def on_message(message):
             embed.add_field(name="Grace League", value=":first_place: 제" + league_first + "회 우승", inline=True)
         if league_second is not "X":
             embed.add_field(name="Grace League", value=":second_place:제" + league_second + "회 준우승", inline=True)
+        if imagelink not in ['','X']:
+            embed.set_image(url=imagelink)
+        if thumbnaillink not in ['','X']:
+            embed.set_thumbnail(url=thumbnaillink)
 
         await channel.send(embed=embed)
 
