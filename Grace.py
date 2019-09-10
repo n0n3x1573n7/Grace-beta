@@ -123,9 +123,9 @@ async def on_message(message):
         elif role == "신입 클랜원":
             roleimage = ""
 
-        if link not in ["X", '']:
+        if link in ["X", '']:
             embed = discord.Embed(title="한줄소개", description=description, color=0x5c0bb7)
-        elif link is not None:
+        else:
             embed = discord.Embed(title="바로가기", url=link, description=description, color=0x5c0bb7)
 
         embed.set_author(name=battletag)
