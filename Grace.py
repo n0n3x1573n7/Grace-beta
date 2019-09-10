@@ -123,18 +123,18 @@ async def on_message(message):
         elif role == "신입 클랜원":
             roleimage = ""
 
-        if link is "X":
+        if link not in ["X", '']:
             embed = discord.Embed(title="한줄소개", description=description, color=0x5c0bb7)
         elif link is not None:
             embed = discord.Embed(title="바로가기", url=link, description=description, color=0x5c0bb7)
 
         embed.set_author(name=battletag)
         embed.add_field(name="직책", value=roleimage + role, inline=True)
-        if arena is not "X":
+        if arena not in ["X", '']:
             embed.add_field(name="Grace Arena", value=":trophy: 제" + arena + "회 우승", inline=True)
-        if league_first is not "X":
+        if league_first not in ["X", '']:
             embed.add_field(name="Grace League", value=":first_place: 제" + league_first + "회 우승", inline=True)
-        if league_second is not "X":
+        if league_second not in ["X", '']:
             embed.add_field(name="Grace League", value=":second_place:제" + league_second + "회 준우승", inline=True)
         if imagelink not in ['','X']:
             embed.set_image(url=imagelink)
