@@ -42,7 +42,9 @@ def has_role(member, role):
     return role in map(lambda x:x.name, member.roles)
 
 async def get_member_by_battletag(battletag):
+    print(grace.members)
     for member in grace.members:
+        print(member)
         if member.nick.startswith(battletag+'/'):
             return member
 
