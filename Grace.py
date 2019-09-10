@@ -38,6 +38,14 @@ async def get_spreadsheet(ws_name):
         return
     return worksheet
 
+def has_role(member, role):
+    return role in map(lambda x:x.name, member.roles)
+
+async def get_member_by_battletag(battletag):
+    for member in grace.members:
+        if member.nick.startswith(battletag+'/'):
+            return member
+
 @client.event
 async def on_message(message):
     author = message.author
@@ -60,7 +68,7 @@ async def on_message(message):
         if author=="운영진":
             spreadsheet=await get_spreadsheet('staff')
             data=spreadsheet.get_all_values()
-            log = '\n\n'.join(map(lambda x:'\n'.join(x), data))
+            log = '\n\n'.join(map(lambda x:'\n'.join(x if x!=''), data))
             embed = discord.Embed(title=":fire: 운영진 목록\n", description=log, color=0x5c0bb7)
             await channel.send(embed=embed)
             return
@@ -84,7 +92,19 @@ async def on_message(message):
         league_first = spreadsheet.cell(index, 9).value
         league_second = spreadsheet.cell(index, 10).value
 
-        #role = spreadsheet.cell(index, 6).value
+        member=get_member_by_battletag(battletag)
+        if member==None:
+            return
+        elif has_role(member, '클랜 마스터'):
+            role='클랜 마스터'
+        elif has_role(member, '운영진'):
+            role='운영진'
+        elif has_role(member, '클랜원'):
+            role='클랜원'
+        elif has_role(member, '신입 클랜원'):
+            role='신입 클랜원'
+        else:
+            return
 
         print(battletag)
         print(role)
