@@ -68,7 +68,7 @@ async def on_message(message):
         if author=="운영진":
             spreadsheet=await get_spreadsheet('staff')
             data=spreadsheet.get_all_values()
-            log = '\n\n'.join(map(lambda x:'\n'.join([x if x!='']), data))
+            log = '\n\n'.join(map(lambda x:'\n'.join([t for i in x if t!='']), data))
             embed = discord.Embed(title=":fire: 운영진 목록\n", description=log, color=0x5c0bb7)
             await channel.send(embed=embed)
             return
