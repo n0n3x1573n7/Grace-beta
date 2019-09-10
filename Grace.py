@@ -25,7 +25,7 @@ async def on_ready():
     print("---------------")
     await client.change_presence(activity=discord.Game(name='>>', type=1))
 
-async def get_spreadsheet():
+async def get_spreadsheet(ws_name):
     creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
     auth=gspread.authorize(creds)
 
