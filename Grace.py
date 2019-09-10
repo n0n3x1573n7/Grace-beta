@@ -111,13 +111,13 @@ async def on_message(message):
 
         print(battletag)
         print(role)
-        if role == "클랜마스터":
+        if role == "클랜 마스터":
             roleimage = ":pen_ballpoint:"
         elif role=="운영진":
             roleimage = ":construction_worker:"
         elif role == "클랜원":
             roleimage = ":boy:"
-        elif role == "신입클랜원":
+        elif role == "신입 클랜원":
             roleimage = ""
 
         if link is "X":
