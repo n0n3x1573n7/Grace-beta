@@ -92,7 +92,7 @@ async def on_message(message):
         league_first = spreadsheet.cell(index, 9).value
         league_second = spreadsheet.cell(index, 10).value
 
-        member=get_member_by_battletag(battletag)
+        member=await get_member_by_battletag(battletag)
         if member==None:
             return
         elif has_role(member, '클랜 마스터'):
@@ -110,7 +110,7 @@ async def on_message(message):
         print(role)
         if role == "클랜마스터":
             roleimage = ":pen_ballpoint:"
-        elif "운영진" in role:
+        elif role=="운영진":
             roleimage = ":construction_worker:"
         elif role == "클랜원":
             roleimage = ":boy:"
