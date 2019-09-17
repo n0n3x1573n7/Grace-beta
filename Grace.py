@@ -200,6 +200,7 @@ async def periodic_sweep():
             continue
 
         res=worksheet.get_all_values()
+        print(grace.members)
         nicks={*map(lambda x:x.nick.split('/')[0] if x.nick!=None else '',grace.members)}
 
         for i in range(1,len(res)):
