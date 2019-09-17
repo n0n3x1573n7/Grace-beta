@@ -203,6 +203,7 @@ async def periodic_sweep():
         nicks={*map(lambda x:x.nick.split('/')[0],grace.members)}
 
         for i in range(1,len(res)):
+            print(res[i][1])
             if res[i][1] not in nicks:
                 worksheet.update_cell(i,3,'')
 
