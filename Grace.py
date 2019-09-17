@@ -206,7 +206,7 @@ async def periodic_sweep():
         for i in range(1,len(res)):
             print(res[i][1], res[i][1] not in nicks)
             if res[i][1] not in nicks:
-                worksheet.update_cell(i,3,'')
+                worksheet.update_cell(i,3,'THIS HAS BEEN CHANGED FOR: {}'.format(res[i][1]))
 
         print('sweep finished')
         return
