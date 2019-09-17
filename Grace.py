@@ -182,10 +182,10 @@ async def periodic_sweep():
     await client.wait_until_ready()
     grace=client.get_guild(359714850865414144)
     cur=current_time()
-    #next_notify=datetime.datetime(cur.year, cur.month, cur.day, 6, 0, 0)+datetime.timedelta(days=1)
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 1, 0, 0)+datetime.timedelta(days=1)
     while True:
-        #await asyncio.sleep((next_notify-current_time()).seconds)
-        #next_notify+=datetime.timedelta(days=1)
+        await asyncio.sleep((next_notify-current_time()).seconds)
+        next_notify+=datetime.timedelta(days=1)
 
         creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
         auth=gspread.authorize(creds)
@@ -201,7 +201,6 @@ async def periodic_sweep():
 
         res=worksheet.get_all_values()
         nicks={*map(lambda x:x.nick.split('/')[0] if (x.nick!=None and '/' in x.nick) else '', grace.members)}
-        print(nicks)
 
         for i in range(1,len(res)):
             print(res[i][1], res[i][1] not in nicks and res[i][3]!="")
@@ -210,7 +209,6 @@ async def periodic_sweep():
 
         print('sweep finished')
         return
-
 
 access_token = os.environ["BOT_TOKEN"]
 client.loop.create_task(periodic_sweep())
