@@ -135,19 +135,24 @@ async def give_prize_money(team):
             
 ##################################################################
 #우승기록 관련    
-async def get_row_by_nick(ws,user=None,mention=None):
-    nick = user.nick.split('/')[0]
-    if user!=None:
-        mention=user.mention
+def get_member_from_mention(mention):
     if not (mention.startswith('<@') and mention.endswith('>')):
         return -1
     if mention[2]!='!':
-        mention=mention[:2]+'!'+mention[2:]
+        m=int(mention[2:-1])
+    else:
+        m=int(mention[3:-1])
+    return grace.get_member(m)
+
+async def get_row_by_nick(ws,user=None,mention=None):
+    if user==None:
+        user=get_member_from_mention(mention)
+    nick = user.nick.split('/')[0]
     try: 
         return ws.find(nick).row
     except gspread.exceptions.CellNotFound:
         ws.append_row(['',nick,'','','','','','X','X','X'])
-        return ws.find(mention).row
+        return ws.find(nick).row
     except gspread.exceptions.APIError:
         return -1
 
@@ -202,15 +207,6 @@ async def get_all_players(ws):
     return [*map(lambda x:x[0],ws.get_all_values()[1:])]
 
 ##################################################################
-
-def get_member_from_mention(mention):
-    if not (mention.startswith('<@') and mention.endswith('>')):
-        return -1
-    if mention[2]!='!':
-        m=int(mention[2:-1])
-    else:
-        m=int(mention[3:-1])
-    return grace.get_member(m)
 
 current_game=None
 
