@@ -146,7 +146,7 @@ async def get_row_by_nick(ws,user=None,mention=None):
     try: 
         return ws.find(nick).row
     except gspread.exceptions.CellNotFound:
-        ws.append_row([nick,'1'])
+        ws.append_row(['',nick,'','','','','','X','X','X'])
         return ws.find(mention).row
     except gspread.exceptions.APIError:
         return -1
