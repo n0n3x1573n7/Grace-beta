@@ -25,7 +25,7 @@ BETA_TESTLAB=486550288686120961
 sheet_name='temp_arena'
 record_name='temp_record'
 gamble_sheet='Beta'
-win_record='introduction'
+win_record='responses'
 prize=10000
 
 client=Bot(command_prefix=('~',))
