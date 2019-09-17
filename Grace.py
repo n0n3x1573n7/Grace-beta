@@ -6,6 +6,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import random
 import openpyxl
+import datetime
 
 BETA=True
 
@@ -172,6 +173,40 @@ async def on_member_remove(member):
     fmt = '{0.mention}\n{0.nick}님이 서버에서 나가셨습니다.'
     await channel.send(fmt.format(member, member.guild))
 
+async def periodic_sweep():
+    if BETA: pass#return
+
+    global grace
+    await client.wait_until_ready()
+    grace=client.get_guild(359714850865414144)
+    cur=current_time()
+    #next_notify=datetime.datetime(cur.year, cur.month, cur.day, 6, 0, 0)+datetime.timedelta(days=1)
+    while True:
+        #await asyncio.sleep((next_notify-current_time()).seconds)
+        #next_notify+=datetime.timedelta(days=1)
+
+        creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
+        auth=gspread.authorize(creds)
+
+        if creds.access_token_expired:
+            auth.login()
+
+        sheet=auth.open_by_url("https://docs.google.com/spreadsheets/d/1gfSsgM_0BVqnZ02ZwRsDniU-qkRF0Wo-B7rJhYoYXqc/edit#gid=174260089")
+        try:
+            worksheet=sheet.worksheet('Copy of responses')
+        except gspread.exceptions.APIError:
+            continue
+
+        res=worksheet.get_all_values()
+        nicks={*map(lambda x:x.nick.split('/')[0],grace.members)}
+
+        for i in range(1,len(res)):
+            if res[i][1] not in nicks:
+                worksheet.update_cell(i,3,'')
+
+        return
+
 
 access_token = os.environ["BOT_TOKEN"]
+client.loop.create_task(periodic_sweep())
 client.run(access_token)
