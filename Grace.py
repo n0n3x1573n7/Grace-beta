@@ -15,6 +15,8 @@ scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/au
 
 url='https://docs.google.com/spreadsheets/d/1gfSsgM_0BVqnZ02ZwRsDniU-qkRF0Wo-B7rJhYoYXqc/edit?usp=drive_web&ouid=108946956826520256706'
 
+current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
+
 @client.event
 async def on_ready():
     global grace
@@ -204,6 +206,7 @@ async def periodic_sweep():
             if res[i][1] not in nicks:
                 worksheet.update_cell(i,3,'')
 
+        print('sweep finished')
         return
 
 
