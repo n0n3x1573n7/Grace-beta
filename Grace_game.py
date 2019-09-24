@@ -383,6 +383,11 @@ async def 목록(message):
         await message.channel.send("신청중인 내전이 없습니다.")
         return
 
+    if current_time()-(await current_game.get_time())>=datetime.timedelta(hours=1):
+        if await current_game.open_additional():
+            await message.channel.send("@everyone\n내전의 추가신청이 허용되었습니다.")
+
+
     embed=discord.Embed(title="내전 참가자 목록")
     embed.add_field(name="일시",value=str(await current_game.get_time())[:-3], inline=True)
     embed.add_field(name="개최자",value=(await current_game.get_opener()).nick.split('/')[0], inline=False)
@@ -430,10 +435,13 @@ async def 신청(message):
 
     player=author(message)
 
-    if await current_game.is_additional_opened()==False and\
-       (datetime.timedelta(minutes=-9)<current_time()-(await current_game.get_time())<datetime.timedelta(hours=1)):
-        await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
-        return
+    if await current_game.is_additional_opened()==False:\
+        if (datetime.timedelta(minutes=-9)<current_time()-(await current_game.get_time())<datetime.timedelta(hours=1)):
+            await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
+            return
+        if current_time()-(await current_game.get_time())>=datetime.timedelta(hours=1):
+            await current_game.open_additional()
+            await message.channel.send("@everyone\n내전의 추가신청이 허용되었습니다.")
 
     if await current_game.add_player(player):
         await message.channel.send("{}님의 신청이 완료되었습니다.".format(player.mention))

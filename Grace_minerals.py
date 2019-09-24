@@ -384,13 +384,13 @@ async def 신청(message):
 
     player=author(message)
 
+    if current_time()-(await current_game.get_time())>=datetime.timedelta(hours=1):
+        await 추가신청허용(message, bypass=True)
+
     if await current_game.is_additional_opened()==False and\
        (datetime.timedelta(minutes=-9)<current_time()-(await current_game.get_time())<datetime.timedelta(hours=1)):
         await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
         return
-
-    if current_time()-(await current_game.get_time())>=datetime.timedelta(hours=1):
-        await 추가신청허용(message, bypass=True)
 
     if await current_game.add_player(player):
         await message.channel.send("{}님의 신청이 완료되었습니다.".format(player.mention))
