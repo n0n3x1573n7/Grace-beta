@@ -18,6 +18,9 @@ current_time=lambda:datetime.datetime.utcnow()+datetime.timedelta(hours=9)
 BETA=True
 BETA_TESTLAB=486550288686120961
 
+sheet_name='temp_minerals'
+record_name='temp_record'
+
 channels={
     '내전신청':    469109911016570890,
     '미네랄즈':    613747228976087040,
@@ -523,7 +526,7 @@ async def on_ready():
     global grace
     await client.wait_until_ready()
     grace=client.get_guild(359714850865414144)
-    print("login: Grace Game")
+    print("login: Grace Minerals")
     print(client.user.name)
     print(client.user.id)
     print("---------------")
