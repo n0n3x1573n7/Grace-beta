@@ -124,7 +124,7 @@ async def on_message(message):
         elif role == "클랜원":
             roleimage = ":boy:"
         elif role == "신입 클랜원":
-            roleimage = ""
+            roleimage = ":baby:"
 
         banned=["X", '', 'x']
         if link in banned:
