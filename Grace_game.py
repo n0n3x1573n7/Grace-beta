@@ -497,7 +497,7 @@ async def 임의신청(message):
 
     for plr in players:
         try:
-            player=client.get_user(int(plr[3:-1]))
+            player=get_member_from_mention(plr)
             print(player)
             if player==None:
                 raise Exception
