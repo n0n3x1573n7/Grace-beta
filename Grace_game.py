@@ -131,6 +131,12 @@ def get_member_from_mention(mention):
         m=int(mention[3:-1])
     return grace.get_member(m)
 
+def get_mention_from_player(member):
+    mention=member.mention
+    if mention[2]!='!':
+        mention='<@!{}>'.format(mention[2:-1])
+    return mention
+
 class Internal():
     @classmethod
     async def create(cls, opener, time):
@@ -169,15 +175,15 @@ class Internal():
 
     async def add_player(self,new_player):
         ws=await get_worksheet()
-        val=ws.findall(new_player.mention)
+        val=ws.findall(get_mention_from_player(new_player))
         if len(val)==0 or (len(val)==1 and val[0].row==1):
-            ws.append_row([new_player.mention])
+            ws.append_row([get_mention_from_player(new_player)])
             return True
         return False
 
     async def remove_player(self,new_player):
         ws=await get_worksheet()
-        val=ws.findall(new_player.mention)
+        val=ws.findall(get_mention_from_player(new_player))
         if len(val)==2 or (len(val)==1 and val[0].row!=1):
             ws.delete_row(val[-1].row)
             return True

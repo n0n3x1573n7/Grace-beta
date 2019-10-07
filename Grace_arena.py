@@ -144,6 +144,12 @@ def get_member_from_mention(mention):
         m=int(mention[3:-1])
     return grace.get_member(m)
 
+def get_mention_from_player(member):
+    mention=member.mention
+    if mention[2]!='!':
+        mention='<@!{}>'.format(mention[2:-1])
+    return mention
+
 async def get_row_by_nick(ws,user=None,mention=None):
     if user==None:
         user=get_member_from_mention(mention)
@@ -247,19 +253,19 @@ class Internal():
 
     async def check_availability(self,player):
         ws=await get_worksheet(record_name)
-        return len(ws.findall(player.mention))!=0
+        return len(ws.findall(get_mention_from_player(player)))!=0
 
     async def add_player(self,new_player):
-        ws=await get_worksheet(sheet_name)
-        val=ws.findall(new_player.mention)
+        ws=await get_worksheet()
+        val=ws.findall(get_mention_from_player(new_player))
         if len(val)==0 or (len(val)==1 and val[0].row==1):
-            ws.append_row([new_player.mention])
+            ws.append_row([get_mention_from_player(new_player)])
             return True
         return False
 
     async def remove_player(self,new_player):
-        ws=await get_worksheet(sheet_name)
-        val=ws.findall(new_player.mention)
+        ws=await get_worksheet()
+        val=ws.findall(get_mention_from_player(new_player))
         if len(val)==2 or (len(val)==1 and val[0].row!=1):
             ws.delete_row(val[-1].row)
             return True
