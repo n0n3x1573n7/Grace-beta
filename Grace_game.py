@@ -21,6 +21,8 @@ BETA_TESTLAB=486550288686120961
 sheet_name='temp'
 record_name='temp_record'
 
+available=30 # 해당 숫자 분 전까지 신청 가능
+
 channels={
     '내전신청':    469109911016570890,
     '미네랄즈':    613747228976087040,
@@ -443,7 +445,7 @@ async def 신청(message):
     player=author(message)
 
     if await current_game.is_additional_opened()==False:
-        if (datetime.timedelta(minutes=-9)<current_time()-(await current_game.get_time())<datetime.timedelta(hours=1)):
+        if (datetime.timedelta(minutes=-(available-1))<current_time()-(await current_game.get_time())<datetime.timedelta(hours=1)):
             await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
             return
         if current_time()-(await current_game.get_time())>=datetime.timedelta(hours=1):
@@ -468,7 +470,7 @@ async def 취소(message):
 
     player=author(message)
 
-    if await current_game.get_time()-current_time()<datetime.timedelta(minutes=9):
+    if await current_game.get_time()-current_time()<datetime.timedelta(minutes=(available-1)):
         await message.channel.send("신청 취소가 불가합니다.")
         return
 
