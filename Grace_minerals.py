@@ -174,7 +174,7 @@ class Internal():
         ws=await get_worksheet(record_name)
         for user in await current_game.get_players():
             try:
-                ws.append_row([user.mention]):
+                ws.append_row([user.mention])
             except:
                 pass
 
