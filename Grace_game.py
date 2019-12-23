@@ -419,7 +419,13 @@ async def 목록(message):
         if await current_game.open_additional():
             await message.channel.send("@everyone\n내전의 추가신청이 허용되었습니다.")
 
-    condition=message.message.content.split()[1]
+    condition=message.message.content.split()
+    
+    if len(condition)==1:
+        condition='전체'
+    else:
+        condition=condition[1]
+
     if condition in '홀 홀수'.split():
         condition='홀수'
     elif condition in '짝 짝수'.split():
