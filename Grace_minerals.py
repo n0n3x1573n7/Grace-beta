@@ -522,7 +522,7 @@ async def 용병신청(message):
     players=message.message.content.split()[1:]
 
     for player in players:
-        if await current_game.add_player(player):
+        if await current_game.add_external_player(player):
             await message.channel.send("{}님의 용병 신청이 완료되었습니다.".format(player))
         else:
             await message.channel.send("{}님은 이미 신청된 용병입니다.".format(player))
@@ -546,7 +546,7 @@ async def 용병취소(message):
     players=message.message.split()[1:]
 
     for player in players:
-        if await current_game.remove_player(player):
+        if await current_game.remove_external_player(player):
             await message.channel.send("{}님의 용병 취소가 완료되었습니다.".format(player))
         else:
             await message.channel.send("{}님은 신청되지 않은 용병입니다.".format(player))
