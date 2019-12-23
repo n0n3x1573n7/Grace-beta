@@ -153,7 +153,7 @@ class Internal():
     async def remove_external_player(self, new_player):
         ws=await get_worksheet()
         val=ws.findall("용병:"+new_player)
-        if len(val)==0:
+        if len(val)!=0:
             ws.delete_row(val[-1].row)
             return True
         return False
