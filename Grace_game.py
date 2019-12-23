@@ -430,6 +430,8 @@ async def 목록(message):
         condition='홀수'
     elif condition in '짝 짝수'.split():
         condition='짝수'
+    elif condition in '홀짝'.split():
+        condition='홀짝'
     else:
         condition='전체'
 
@@ -447,6 +449,11 @@ async def 목록(message):
         cnt+=1
         if (condition in ['홀수', '전체'] and cnt%2==1) or (condition in ['짝수', '전체'] and cnt%2==0):
             log+='\n{}. {}'.format(cnt, user.split('/')[0])
+        if condition in '홀짝'.split():
+            if cnt%2==0:
+                log+='\n__{}. {}__'.format(cnt, user.split('/')[0])
+            else:
+                log+='\n{}. {}'.format(cnt, user.split('/')[0])
     log+='\n\n내전 신청자 총 {}명'.format(cnt)
 
     embed.add_field(name="신청자",value=log)
