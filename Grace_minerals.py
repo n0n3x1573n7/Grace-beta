@@ -134,10 +134,26 @@ class Internal():
             return True
         return False
 
+    async def add_external_player(self, new_player):
+        ws=await get_worksheet()
+        val=ws.findall("용병:"+new_player)
+        if len(val)==0:
+            ws.append_row(["용병:"+new_player])
+            return True
+        return False
+
     async def remove_player(self,new_player):
         ws=await get_worksheet()
         val=ws.findall(get_mention_from_player(new_player))
         if len(val)==2 or (len(val)==1 and val[0].row!=1):
+            ws.delete_row(val[-1].row)
+            return True
+        return False
+
+    async def remove_external_player(self, new_player):
+        ws=await get_worksheet()
+        val=ws.findall("용병:"+new_player)
+        if len(val)==0:
             ws.delete_row(val[-1].row)
             return True
         return False
@@ -487,6 +503,53 @@ async def 신청반려(message):
         else:
             await message.channel.send("{}님은 신청되지 않은 플레이어입니다.".format(player.mention))
 
+
+@client.command()
+async def 용병신청(message):
+    global current_game
+
+    if message.channel.id!=channels['미네랄즈']:
+        return
+    if current_game is None:
+        await message.channel.send("신청중인 내전이 없습니다.")
+        return
+
+    opener=author(message)
+    if opener!=await current_game.get_opener() and (not is_moderator(opener)):
+        await message.channel.send("내전 개최자 또는 운영진만 용병 신청이 가능합니다.")
+        return
+
+    players=message.message.content.split()[1:]
+
+    for player in players:
+        if await current_game.add_player(player):
+            await message.channel.send("{}님의 용병 신청이 완료되었습니다.".format(player))
+        else:
+            await message.channel.send("{}님은 이미 신청된 용병입니다.".format(player))
+        del player
+
+@client.command()
+async def 용병취소(message):
+    global current_game
+
+    if message.channel.id!=channels['미네랄즈']:
+        return
+    if current_game is None:
+        await message.channel.send("신청중인 내전이 없습니다.")
+        return
+
+    opener=author(message)
+    if opener!=await current_game.get_opener() and (not is_moderator(opener)):
+        await message.channel.send("내전 개최자 또는 운영진만 용병 취소가 가능합니다.")
+        return
+
+    players=message.message.split()[1:]
+
+    for player in players:
+        if await current_game.remove_player(player):
+            await message.channel.send("{}님의 용병 취소가 완료되었습니다.".format(player))
+        else:
+            await message.channel.send("{}님은 신청되지 않은 용병입니다.".format(player))
 
 ############################################################
 #자동 기록(이벤트)
