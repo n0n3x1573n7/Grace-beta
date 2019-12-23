@@ -341,8 +341,11 @@ async def 내전종료(message):
     log="{} 미네랄즈 내전 참가자 목록\n\n개최자: {}\n".format(str(await current_game.get_time())[:-3], (await current_game.get_opener()).nick.split('/')[0])
     cnt=1
     for user in (await current_game.get_players()):
-        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
-        cnt+=1
+        try:
+            log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
+            cnt+=1
+        except:
+            continue
     log+='\n\n미네랄즈 내전 신청자 총 {}명'.format(cnt-1)
 
     await current_game.leave_record()
@@ -373,8 +376,12 @@ async def 목록(message):
     log=""
     cnt=0
     for user in await current_game.get_players():
+        try:
+            user=user.nick
+        except:
+            pass
         cnt+=1
-        log+='\n{}. {}'.format(cnt, user.nick.split('/')[0])
+        log+='\n{}. {}'.format(cnt, user.split('/')[0])
     log+='\n\n미네랄즈 내전 신청자 총 {}명'.format(cnt)
 
     embed.add_field(name="신청자",value=log)
