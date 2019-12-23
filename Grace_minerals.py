@@ -223,7 +223,7 @@ async def 내전개최(message):
     current=current_time()
     time=content(message).split()
     if len(time)==1:
-        hour=21
+        hour=20
         minute=0
         hour24=True
     else:
@@ -261,7 +261,7 @@ async def 시간변경(message):
     current=current_time()
     time=content(message).split()
     if len(time)==1:
-        hour=21
+        hour=20
         minute=0
         hour24=True
     else:
@@ -550,7 +550,7 @@ async def 용병취소(message):
         await message.channel.send("내전 개최자 또는 운영진만 용병 취소가 가능합니다.")
         return
 
-    players=message.message.split()[1:]
+    players=message.message.content.split()[1:]
 
     for player in players:
         if await current_game.remove_external_player(player):
