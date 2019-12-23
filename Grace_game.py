@@ -662,7 +662,7 @@ async def 도움말(ctx):
         embed.add_field(name="\u200B",value="\u200B",inline=False)
         embed.add_field(name="모든 사람이 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="!내전확인\n",value="현재 내전이 개최중이라면 내전의 정보를 출력합니다.",inline=False)
-        embed.add_field(name="!목록\n",value="선착순으로, 신청자 목록을 확인합니다. 목록 뒤에 '홀수' 또는 '짝수'를 입력하면 홀수번째 또는 짝수번째 신청한 목록을 볼 수 있습니다.\n",inline=False)
+        embed.add_field(name="!목록\n",value="선착순으로, 신청자 목록을 확인합니다. 목록 뒤에 '홀수' 또는 '짝수'를 입력하면 홀수번째 또는 짝수번째 신청한 목록을 볼 수 있습니다. '홀짝'을 입력하면 짝수번째 신청자에 밑줄이 쳐진 채로 출력됩니다.\n",inline=False)
         embed.add_field(name="!신청\n",value="본인이 개최된 내전에 신청합니다.\n",inline=False)
         embed.add_field(name="!취소\n",value="본인의 내전 신청을 취소합니다.\n",inline=False)
     if ctx.channel.id==channels['그룹찾기']:
