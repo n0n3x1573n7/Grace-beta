@@ -118,9 +118,10 @@ class Internal():
         ws=await get_worksheet()
         val=await get_all_players(ws)
         users=[]
-        for user in map(get_member_from_mention,val):
-            if user==-1:
-                pass
+        for entry in val:
+            user=get_member_from_mention(entry)
+            if user==-1 and entry.startswith('용병:'):
+                users.append(entry)
             else:
                 users.append(user)
         return users
@@ -172,7 +173,10 @@ class Internal():
     async def leave_record(self):
         ws=await get_worksheet(record_name)
         for user in await current_game.get_players():
-            ws.append_row([user.mention])
+            try:
+                ws.append_row([user.mention]):
+            except:
+                pass
 
 current_game=None
 
