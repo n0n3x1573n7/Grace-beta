@@ -419,8 +419,15 @@ async def 목록(message):
         if await current_game.open_additional():
             await message.channel.send("@everyone\n내전의 추가신청이 허용되었습니다.")
 
+    condition=message.message.content.split()[1]
+    if condition in '홀 홀수'.split():
+        condition='홀수'
+    elif condition in '짝 짝수'.split():
+        condition='짝수'
+    else:
+        condition='전체'
 
-    embed=discord.Embed(title="내전 참가자 목록")
+    embed=discord.Embed(title="미네랄즈 내전 참가자 목록({})".format(condition))
     embed.add_field(name="일시",value=str(await current_game.get_time())[:-3], inline=True)
     embed.add_field(name="개최자",value=(await current_game.get_opener()).nick.split('/')[0], inline=False)
 
@@ -432,8 +439,9 @@ async def 목록(message):
         except:
             pass
         cnt+=1
-        log+='\n{}. {}'.format(cnt, user.split('/')[0])
-    log+='\n\n내전 신청자 총 {}명'.format(cnt)
+        if (condition in ['홀수', '전체'] and cnt%2==1) or (condition in ['짝수', '전체'] and cnt%2==0):
+            log+='\n{}. {}'.format(cnt, user.split('/')[0])
+    log+='\n\n미네랄즈 내전 신청자 총 {}명'.format(cnt)
 
     embed.add_field(name="신청자",value=log)
     await message.channel.send(embed=embed)
