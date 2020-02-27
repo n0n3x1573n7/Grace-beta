@@ -321,7 +321,7 @@ async def 신청변경(message):
     delta=content(message).split()[1]
     await current_game.set_delta(int(delta))
 
-    msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(await current_game.get_time())[:-3], (await current_game.get_opener()).mention)
+    msg="@everyone\n{} 내전 신청이 이제 {}분 전까지 신청할 수 있습니다..\n개최자: {}".format(str(await current_game.get_time())[:-3], str(await current_game.get_delta()), (await current_game.get_opener()).mention)
     await message.channel.send(msg)
 
 
