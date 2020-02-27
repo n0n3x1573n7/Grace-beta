@@ -21,8 +21,6 @@ BETA_TESTLAB=486550288686120961
 sheet_name='temp'
 record_name='temp_record'
 
-available=30 # 해당 숫자 분 전까지 신청 가능
-
 channels={
     '내전신청':    469109911016570890,
     '미네랄즈':    613747228976087040,
@@ -146,7 +144,7 @@ class Internal():
         await self.set_opener(opener)
         await self.set_time(time)
         ws=await get_worksheet()
-        ws.update_cell(3,1,'0')
+        ws.update_cell(4,1,'0')
         return self
 
     @classmethod
@@ -210,8 +208,8 @@ class Internal():
 
     async def open_additional(self):
         ws=await get_worksheet()
-        if ws.cell(3,1).value=='0':
-            ws.update_cell(3,1,'1')
+        if ws.cell(4,1).value=='0':
+            ws.update_cell(4,1,'1')
             return True
         return False
 
@@ -227,14 +225,22 @@ class Internal():
         ws=await get_worksheet()
         return eval(ws.cell(2,1).value)
 
+    async def get_delta(self):
+        ws=await get_worksheet()
+        return eval(ws.cell(3,1).value)
+
+    async def set_delta(self, delta):
+        ws=await get_worksheet()
+        ws.update_cell(3,1,str(delta))
+
     async def is_additional_opened(self):
         ws=await get_worksheet()
-        return ws.cell(3,1).value=='1'
+        return ws.cell(4,1).value=='1'
 
     async def close(self):
         ws=await get_worksheet()
         ws.clear()
-        ws.resize(rows=3, cols=1)
+        ws.resize(rows=4, cols=1)
 
     async def leave_record(self):
         ws=await get_worksheet(record_name)
@@ -292,9 +298,32 @@ async def 내전개최(message):
         else:
             time+=datetime.timedelta(hours=12)
     current_game=await Internal.create(opener, time)
+    await current_game.set_delta(30)
 
     msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(await current_game.get_time())[:-3], (await current_game.get_opener()).mention)
     await message.channel.send(msg)
+
+@client.commend()
+async def 신청변경(message):
+    global current_game
+
+    if message.channel.id!=channels['내전신청']:
+        return
+    if current_game is None:
+        await message.channel.send("신청중인 내전이 없습니다.")
+        return
+
+    opener=author(message)
+    if opener!=(await current_game.get_opener()) and (not is_moderator(opener)):
+        await message.channel.send("내전 개최자 또는 운영진만 신청 시간을 변경할 수 있습니다.")
+        return
+
+    delta=content(message).split()[1]
+    await current_game.set_delta(int(delta))
+
+    msg="@everyone\n{} 내전이 {}로 변경되었습니다.\n개최자: {}".format(str(prev_time)[:-3], str(await current_game.get_time())[:-3], (await current_game.get_opener()).mention)
+    await message.channel.send(msg)
+
 
 @client.command()
 async def 시간변경(message):
@@ -307,6 +336,9 @@ async def 시간변경(message):
         return
 
     opener=author(message)
+    if opener!=(await current_game.get_opener()) and (not is_moderator(opener)):
+        await message.channel.send("내전 개최자 또는 운영진만 시간을 변경할 수 있습니다.")
+        return
 
     current=current_time()
     time=content(message).split()
@@ -493,7 +525,7 @@ async def 신청(message):
     player=author(message)
 
     if await current_game.is_additional_opened()==False:
-        if (datetime.timedelta(minutes=-(available-1))<current_time()-(await current_game.get_time())<datetime.timedelta(hours=1)):
+        if (datetime.timedelta(minutes=-((await current_game.available())-1))<current_time()-(await current_game.get_time())<datetime.timedelta(hours=1)):
             await message.channel.send("신청이 마감되었습니다. 추가신청을 기다려주세요.")
             return
         if current_time()-(await current_game.get_time())>=datetime.timedelta(hours=1):
@@ -518,7 +550,7 @@ async def 취소(message):
 
     player=author(message)
 
-    if await current_game.get_time()-current_time()<datetime.timedelta(minutes=(available-1)):
+    if await current_game.get_time()-current_time()<datetime.timedelta(minutes=((await current_game.available())-1)):
         await message.channel.send("신청 취소가 불가합니다.")
         return
 
@@ -653,6 +685,7 @@ async def 도움말(ctx):
         embed.add_field(name="내전 개최자 및 운영진만 사용 가능한 명령어",value="\u200B",inline=False)
         embed.add_field(name="!개최자변경 @사용자\n",value="개최자를 멘션한 사용자로 변경합니다.\n",inline=False)
         embed.add_field(name="!시간변경 hh:mm",value="내전의 개최 시각을 해당 시각으로 변경합니다.",inline=False)
+        embed.add_field(name="!신청변경 mm",value="내전의 신청 가능 시간을 개최 시각 전 mm분 전까지로 변경합니다.",inline=False)
         embed.add_field(name="!내전종료\n",value="내전을 종료하고, 로그를 기록합니다.\n",inline=False)
         embed.add_field(name="!추가신청허용\n",value="추가신청을 허용합니다. 한번 허용하면 이후로 계속 신청이 가능하며, 내전 개최 시점 1시간 이후로는 자동으로 신청이 가능합니다.\n",inline=False)
         embed.add_field(name="!임의신청 @사용자1 @사용자2 ...\n",value="멘션한 사용자들을 신청한 것으로 처리합니다.\n",inline=False)
