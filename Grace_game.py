@@ -303,7 +303,7 @@ async def 내전개최(message):
     msg="@everyone\n{} 내전 신청이 열렸습니다.\n개최자: {}".format(str(await current_game.get_time())[:-3], (await current_game.get_opener()).mention)
     await message.channel.send(msg)
 
-@client.commend()
+@client.command()
 async def 신청변경(message):
     global current_game
 
