@@ -120,7 +120,7 @@ async def get_worksheet(sheet_name=sheet_name):
     return worksheet
 
 async def get_all_players(ws):
-    return [*map(lambda x:x[0],ws.get_all_values()[3:])]
+    return [*map(lambda x:x[0],ws.get_all_values()[4:])]
 
 def get_member_from_mention(mention):
     if not (mention.startswith('<@') and mention.endswith('>')):
