@@ -45,6 +45,9 @@ def has_role(member, role):
     return role in map(lambda x:x.name, member.roles)
 
 async def get_member_by_battletag(battletag):
+    global grace
+    grace=client.get_guild(359714850865414144)
+
     for member in grace.members:
         try:
             if member.nick.startswith(battletag+'/'):
@@ -92,6 +95,7 @@ async def on_message(message):
         except gspread.exceptions.APIError:
             return
         
+        mention=spreadsheet.cell(index, 1).value
         battletag = spreadsheet.cell(index, 2).value
         link = spreadsheet.cell(index, 4).value
         description = spreadsheet.cell(index, 5).value
@@ -100,6 +104,7 @@ async def on_message(message):
         arena = spreadsheet.cell(index, 8).value
         league_first = spreadsheet.cell(index, 9).value
         league_second = spreadsheet.cell(index, 10).value
+        print(index, battletag, link, description, imagelink, thumbnaillink, arena, league_first, league_second)
 
         member=await get_member_by_battletag(battletag)
         if member==None:
@@ -133,6 +138,7 @@ async def on_message(message):
             embed = discord.Embed(title="바로가기", url=link, description=description, color=0x5c0bb7)
 
         embed.set_author(name=battletag)
+        embed.add_field(name="멘션", value=mention, inline=True)
         embed.add_field(name="직책", value=roleimage + role, inline=True)
         if arena not in banned:
             embed.add_field(name="Grace Arena", value=":trophy: 제" + arena + "회 우승", inline=True)
@@ -151,11 +157,14 @@ async def on_message(message):
 async def on_message_delete(message):
     if BETA: return
 
+    create = str(message.created_at).split('.')[0]
+    if message.edited_at:
+        create+='(최종수정 {})'.format(str(message.edited_at).split('.')[0])
     author = message.author
     content = message.clean_content
     channel = message.channel
     delchannel = message.guild.get_channel(527859699702562828)
-    await delchannel.send('{} / {}: {}'.format(channel, author, content))
+    await delchannel.send('{} - {} / {}: {}'.format(create, channel, author, content))
 
 @client.event
 async def on_member_join(member):
@@ -195,7 +204,7 @@ async def periodic_sweep():
 
         sheet=auth.open_by_url("https://docs.google.com/spreadsheets/d/1gfSsgM_0BVqnZ02ZwRsDniU-qkRF0Wo-B7rJhYoYXqc/edit#gid=174260089")
         try:
-            worksheet=sheet.worksheet('Copy of responses')
+            worksheet=sheet.worksheet('responses')
         except gspread.exceptions.APIError:
             continue
 
