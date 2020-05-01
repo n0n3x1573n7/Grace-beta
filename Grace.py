@@ -141,11 +141,11 @@ async def on_message(message):
         embed.add_field(name="멘션", value=mention, inline=True)
         embed.add_field(name="직책", value=roleimage + role, inline=True)
         if arena not in banned:
-            embed.add_field(name="Grace Arena", value=":trophy: 제" + arena + "회 우승", inline=True)
+            embed.add_field(name="Grace Arena", value=":trophy: 제" + arena + "회 우승", inline=False)
         if league_first not in banned:
-            embed.add_field(name="Grace League", value=":first_place: 제" + league_first + "회 우승", inline=True)
+            embed.add_field(name="Grace League", value=":first_place: 제" + league_first + "회 우승", inline=False)
         if league_second not in banned:
-            embed.add_field(name="Grace League", value=":second_place:제" + league_second + "회 준우승", inline=True)
+            embed.add_field(name="Grace League", value=":second_place:제" + league_second + "회 준우승", inline=False)
         if imagelink not in banned:
             embed.set_image(url=imagelink)
         if thumbnaillink not in banned:
