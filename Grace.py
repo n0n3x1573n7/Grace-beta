@@ -193,7 +193,7 @@ async def periodic_sweep():
     global grace
     await client.wait_until_ready()
     cur=current_time()
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 1, 55, 0)+datetime.timedelta(days=1)
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 1, 58, 0)+datetime.timedelta(days=1)
     while True:
         await asyncio.sleep((next_notify-current_time()).seconds)
         next_notify+=datetime.timedelta(days=1)
