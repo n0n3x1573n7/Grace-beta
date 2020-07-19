@@ -104,7 +104,8 @@ async def on_message(message):
         arena = spreadsheet.cell(index, 8).value
         league_first = spreadsheet.cell(index, 9).value
         league_second = spreadsheet.cell(index, 10).value
-        print(index, battletag, link, description, imagelink, thumbnaillink, arena, league_first, league_second)
+        friends = spreadsheet.cell(index, 11).value
+        print(index, battletag, link, description, imagelink, thumbnaillink, arena, league_first, league_second, friends)
 
         member=await get_member_by_battletag(battletag)
         if member==None:
@@ -146,6 +147,8 @@ async def on_message(message):
             embed.add_field(name="Grace League", value=":first_place: 제" + league_first + "회 우승", inline=False)
         if league_second not in banned:
             embed.add_field(name="Grace League", value=":second_place:제" + league_second + "회 준우승", inline=False)
+        if friends not in banned:
+            embed.add_field(name="우친바", value=friends, inline=False)
         if imagelink not in banned:
             embed.set_image(url=imagelink)
         if thumbnaillink not in banned:
@@ -159,7 +162,7 @@ async def on_message_delete(message):
 
     create = str(message.created_at).split('.')[0]
     if message.edited_at:
-        create+='(최종수정 {})'.format(str(message.edited_at).split('.')[0])
+        create+='(최종수정 {})'.format(str(message.edited_at+datetime.timedelta(hours=9)).split('.')[0])
     author = message.author
     content = message.clean_content
     channel = message.channel
@@ -189,35 +192,47 @@ async def periodic_sweep():
 
     global grace
     await client.wait_until_ready()
-    grace=client.get_guild(359714850865414144)
     cur=current_time()
-    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 1, 0, 0)+datetime.timedelta(days=1)
+    next_notify=datetime.datetime(cur.year, cur.month, cur.day, 1, 51, 0)+datetime.timedelta(days=1)
     while True:
         await asyncio.sleep((next_notify-current_time()).seconds)
         next_notify+=datetime.timedelta(days=1)
-
+        print('next sweep:', next_notify)
+        
         creds=ServiceAccountCredentials.from_json_keyfile_name("Grace-defe42f05ec3.json", scope)
         auth=gspread.authorize(creds)
-
+        
         if creds.access_token_expired:
             auth.login()
 
         sheet=auth.open_by_url("https://docs.google.com/spreadsheets/d/1gfSsgM_0BVqnZ02ZwRsDniU-qkRF0Wo-B7rJhYoYXqc/edit#gid=174260089")
         try:
-            worksheet=sheet.worksheet('responses')
+            worksheet=sheet.worksheet('Copy of responses')
         except gspread.exceptions.APIError:
-            continue
-
+            print('spreadsheet error; trying tomorrow.')
+        
+        grace=client.get_guild(359714850865414144)
         res=worksheet.get_all_values()
         nicks={*map(lambda x:x.nick.split('/')[0] if (x.nick!=None and '/' in x.nick) else '', grace.members)}
 
+        print("Command sweep")
         for i in range(1,len(res)):
-            print(res[i][1], res[i][1] not in nicks and res[i][3]!="")
-            if res[i][1] not in nicks and res[i][3]!="":
+            print(res[i][1], (res[i][1] not in nicks) and res[i][2]!="")
+            if (res[i][1] not in nicks) and res[i][2]!="":
                 worksheet.update_cell(i+1,3,"")
 
+        print("Record sweep")
+        to_be_deleted=[]
+        for i in range(1,len(res)):
+            print(res[i][1], (res[i][1] not in nicks), (res[i][7]+res[i][8]+res[i][9]+res[i][10]).strip()=="")
+            if (res[i][1] not in nicks) and (res[i][7]+res[i][8]+res[i][9]+res[i][10]).strip()=="":
+                to_be_deleted.append(i)
+
+        print(to_be_deleted)
+        for i in reversed(to_be_deleted):
+            worksheet.delete_row(i)
+
         print('sweep finished')
-        return
 
 access_token = os.environ["BOT_TOKEN"]
 client.loop.create_task(periodic_sweep())
